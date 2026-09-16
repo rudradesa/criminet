@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relationship Discovery</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main class="wrap">
+  <a href="/dashboard" class="back">← Dashboard</a>
+  <header class="page-header">
+    <p class="eyebrow">PHASE 4</p>
+    <h1>Relationship Discovery</h1>
+    <p class="muted">Read-only analysis. The system compares raw entity data and discovers associations automatically. No relationship is inserted into Neo4j.</p>
+  </header>
+  <section class="panel">
+    <div class="form-grid">
+      <div class="field"><label for="type">Filter source type</label><select id="type"><option value="">All</option><option>PERSON</option><option>CASE</option><option>VEHICLE</option><option>PHONE</option><option>ADDRESS</option><option>LOCATION</option></select></div>
+      <div class="field"><label for="limit">Maximum results</label><input id="limit" type="number" min="10" max="2000" value="500"></div>
+    </div>
+    <button class="button" id="run">Discover Relationships</button>
+    <p id="status" class="muted"></p>
+  </section>
+  <section class="panel"><div id="results">Run discovery to see automatically detected associations.</div></section>
+</main>
+<script>
+const type=document.getElementById('type'), limit=document.getElementById('limit'), status=document.getElementById('status'), results=document.getElementById('results');
+function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
+document.getElementById('run').addEventListener('click',async()=>{
+  status.textContent='Discovering...'; results.textContent='';
+  try{
+    const j=await (await fetch('/api/relationships/discover')).json();
+    if(!j.success) throw new Error(j.message||'Discovery failed');
+    let data=j.data.edges||[];
+    if(type.value) data=data.filter(e=>e.source.type===type.value);
+    data=data.slice(0,Math.min(Math.max(Number(limit.value)||500,10),2000));
+    status.textContent=`Showing ${data.length} discovered associations. None were written to Neo4j.`;
+    results.innerHTML=data.length?data.map(e=>`<article class="relationship-card"><div class="connection"><strong>${esc(e.source.type)}</strong> ${esc(e.source.name)} <span>→ ${esc(e.type.replaceAll('_',' '))} →</span> <strong>${esc(e.target.type)}</strong> ${esc(e.target.name)}</div><p>${esc(e.reason)}</p><small>Confidence/strength: ${esc(e.strength)}</small></article>`).join(''):'No associations discovered from the current raw data.';
+  }catch(e){status.textContent=e.message;}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1485 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Investigation Tree + AI Analysis</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root{
+      --navy:#081722;
+      --navy2:#0d2231;
+      --panel:#102636;
+      --panel2:#0c1d29;
+      --line:#315267;
+      --line2:#3e647d;
+      --text:#e6edf1;
+      --muted:#91a5b2;
+      --orange:#d98b3d;
+      --orange2:#efad68;
+      --blue:#4d8bb5;
+      --green:#62b98c;
+      --red:#d36d6d;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      background:
+        radial-gradient(circle at 70% 0%,rgba(58,108,142,.12),transparent 35%),
+        linear-gradient(180deg,#0b1b28,#07131c);
+      color:var(--text);
+    }
+
+    .wrap{
+      width:min(1450px,calc(100% - 42px));
+      margin:auto;
+      padding:24px 0 45px;
+    }
+
+    .back{
+      display:inline-flex;
+      padding:8px 12px;
+      margin-bottom:18px;
+      border:1px solid var(--line);
+      background:#0e2535;
+      color:#b9c9d2;
+      text-decoration:none;
+      font-size:13px;
+    }
+
+    .back:hover{border-color:var(--blue);color:#fff}
+
+    .page-header{
+      margin-bottom:16px;
+      padding:22px 25px;
+      border:1px solid var(--line);
+      border-left:4px solid var(--orange);
+      background:linear-gradient(90deg,#112b3d,#0d2130);
+    }
+
+    .eyebrow{
+      margin:0 0 4px;
+      color:var(--orange2);
+      font-size:10px;
+      font-weight:750;
+      letter-spacing:2px;
+      text-transform:uppercase;
+    }
+
+    .page-header h1{
+      margin:0;
+      color:#f4f6f7;
+      font-size:30px;
+      line-height:1.2;
+    }
+
+    .page-header .muted{margin:7px 0 0;font-size:13px}
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:0;
+      background:rgba(16,38,54,.96);
+      box-shadow:0 8px 25px rgba(0,0,0,.16);
+    }
+
+    .graph-toolbar{
+      padding:17px 20px;
+      margin-bottom:16px;
+    }
+
+    .graph-toolbar .form-grid{
+      display:grid;
+      grid-template-columns:1fr 1.8fr .8fr .8fr;
+      gap:12px;
+      margin:0;
+    }
+
+    .field{min-width:0}
+    .field label{
+      display:block;
+      margin-bottom:6px;
+      color:#bdccd5;
+      font-size:11px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+
+    input,select{
+      width:100%;
+      min-height:42px;
+      padding:9px 11px;
+      border:1px solid #35566b;
+      border-radius:2px;
+      background:#091923;
+      color:#e8eef1;
+      font:inherit;
+      font-size:13px;
+      outline:none;
+    }
+
+    input:focus,select:focus{
+      border-color:var(--blue);
+      box-shadow:0 0 0 2px rgba(77,139,181,.12);
+    }
+
+    .header-actions{
+      display:flex;
+      gap:9px;
+      margin-top:13px;
+    }
+
+    .button,.secondary-button{
+      min-height:42px;
+      padding:0 17px;
+      border-radius:2px;
+      font:inherit;
+      font-size:13px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .button{
+      border:1px solid #e5a15b;
+      background:var(--orange);
+      color:#171008;
+    }
+
+    .button:hover{background:var(--orange2)}
+
+    .secondary-button{
+      border:1px solid #456579;
+      background:#163247;
+      color:#d7e2e8;
+    }
+
+    .secondary-button:hover{border-color:var(--blue);background:#1d4058}
+
+    #status{
+      min-height:20px;
+      margin:10px 0 0;
+      font-size:12px;
+      color:#8fa5b3;
+    }
+
+    .workspace{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 380px;
+      gap:16px;
+      align-items:stretch;
+    }
+
+    .graph-panel{
+      min-width:0;
+      min-height:760px;
+      overflow:hidden;
+    }
+
+    .graph-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+      padding:15px 19px;
+      border-bottom:1px solid var(--line);
+      background:#122b3d;
+    }
+
+    .graph-title h2{
+      margin:0;
+      font-size:17px;
+      color:#f1f4f5;
+    }
+
+    .graph-help{
+      color:#8096a4;
+      font-size:11px;
+    }
+
+    .graph-canvas{
+      position:relative;
+      height:690px;
+      overflow:hidden;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),
+        #091821;
+      background-size:32px 32px;
+    }
+
+    #graph{
+      display:block;
+      width:100%;
+      height:100%;
+    }
+
+    .graph-empty{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      pointer-events:none;
+      color:#738996;
+      font-size:13px;
+    }
+
+    .graph-empty strong{
+      display:block;
+      margin-bottom:5px;
+      color:#b7c7cf;
+      font-size:15px;
+    }
+
+    .graph-node text{pointer-events:none}
+
+    .graph-node .node-card{
+      fill:#102b3c;
+      stroke:#41647a;
+      stroke-width:1.2;
+    }
+
+    .graph-node.root .node-card{
+      fill:#26351f;
+      stroke:var(--orange);
+      stroke-width:2;
+    }
+
+    .graph-node:hover .node-card{stroke:#7ca9c2}
+
+    .graph-node .node-dot{stroke:#07131b;stroke-width:2}
+    .graph-node.selected .node-card{stroke:#fff;stroke-width:2.5}
+
+    .node-type{
+      font-size:9px;
+      font-weight:800;
+      letter-spacing:1px;
+    }
+
+    .node-name{
+      fill:#edf2f4;
+      font-size:12px;
+      font-weight:650;
+    }
+
+    .node-id{
+      fill:#8198a6;
+      font-size:9px;
+    }
+
+    .graph-link{
+      fill:none;
+      stroke:#4b6575;
+      stroke-width:1.5;
+      opacity:.82;
+      cursor:pointer;
+    }
+
+    .graph-link:hover,.graph-link.edge-active{
+      stroke:var(--orange2);
+      stroke-width:3;
+      opacity:1;
+    }
+
+    .link-label-bg{
+      fill:#091923;
+      stroke:#304b5d;
+      stroke-width:1;
+      rx:4;
+    }
+
+    .link-label{
+      fill:#a9bac4;
+      font-size:9px;
+      font-weight:700;
+      letter-spacing:.3px;
+      pointer-events:none;
+    }
+
+    .depth-label{
+      fill:#526b7a;
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:1px;
+    }
+
+    .graph-controls{
+      position:absolute;
+      right:13px;
+      bottom:13px;
+      display:flex;
+      gap:5px;
+    }
+
+    .graph-control{
+      width:34px;
+      height:32px;
+      border:1px solid #355467;
+      background:#102737;
+      color:#cad7dd;
+      cursor:pointer;
+      font-size:17px;
+    }
+
+    .graph-control:hover{border-color:var(--blue);background:#18384d}
+
+    .ai-panel{
+      min-height:760px;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+
+    .ai-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:18px 19px;
+      border-bottom:1px solid var(--line);
+      background:#122b3d;
+    }
+
+    .ai-head h2{margin:0;font-size:18px;color:#f3f5f6}
+
+    .ai-badge{
+      padding:5px 8px;
+      border:1px solid #456274;
+      background:#0d202d;
+      color:#9db1bd;
+      font-size:10px;
+      font-weight:750;
+      white-space:nowrap;
+    }
+
+    .ai-section{
+      padding:15px 18px;
+      border-bottom:1px solid #263f4f;
+    }
+
+    .ai-label{
+      margin-bottom:8px;
+      color:#8197a5;
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+
+    .ai-value{font-size:13px;line-height:1.6;color:#d5dfe4}
+
+    .ai-node{
+      padding:10px 11px;
+      border:1px solid #345366;
+      background:#0b1d29;
+    }
+
+    .ai-node strong{display:block;color:#eef2f4;font-size:12px}
+    .ai-node span{display:block;margin-top:2px;color:#788f9e;font:10px Consolas,monospace}
+
+    .connection-arrow{
+      padding:7px 0;
+      text-align:center;
+      color:var(--orange2);
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:.8px;
+    }
+
+    .ai-list{margin:0;padding-left:17px}
+    .ai-list li{margin:5px 0;font-size:12px;line-height:1.5;color:#c8d4da}
+
+    .ai-actions{
+      margin-top:auto;
+      padding:16px 18px 18px;
+      background:#0d202c;
+    }
+
+    .ai-actions button{width:100%}
+
+    .ai-status{
+      min-height:18px;
+      margin-top:8px;
+      font-size:11px;
+    }
+
+    .ai-error{color:#df8585!important}
+    .ai-success{color:#78c89d!important}
+
+    .legend-panel{
+      margin-top:16px;
+    }
+
+    .legend-panel h2{
+      margin:0;
+      padding:15px 19px;
+      border-bottom:1px solid var(--line);
+      background:#122b3d;
+      font-size:16px;
+    }
+
+    .legend-panel p{
+      margin:0;
+      padding:13px 19px;
+      color:#879ba8;
+      font-size:12px;
+      line-height:1.55;
+    }
+
+    #legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px;
+      padding:0 19px 17px;
+    }
+
+    #legend span{
+      padding:5px 8px;
+      border:1px solid #355467;
+      background:#0d202c;
+      color:#aebec6;
+      font-size:10px;
+      font-weight:700;
+    }
+
+    @media(max-width:1100px){
+      .workspace{grid-template-columns:1fr}
+      .ai-panel{min-height:0}
+      .graph-panel{min-height:650px}
+      .graph-canvas{height:600px}
+    }
+
+    @media(max-width:800px){
+      .wrap{width:calc(100% - 22px)}
+      .graph-toolbar .form-grid{grid-template-columns:1fr 1fr}
+    }
+
+    @media(max-width:560px){
+      .graph-toolbar .form-grid{grid-template-columns:1fr}
+      .header-actions{flex-direction:column}
+      .header-actions button{width:100%}
+    }
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <a href="/dashboard" class="back">← Dashboard</a>
+  <header class="page-header">
+    <p class="eyebrow">PHASE 5 • AI ASSISTED ANALYSIS</p>
+    <h1>Investigation Tree</h1>
+    <p class="muted">Neo4j stores raw intelligence. Node.js discovers associations. Ollama explains only the selected, backend-verified association.</p>
+  </header>
+
+  <section class="panel graph-toolbar">
+    <div class="form-grid">
+      <div class="field">
+        <label for="rootType">Root Type</label>
+        <select id="rootType">
+          <option value="PERSON">Person</option>
+          <option value="CASE">Case</option>
+          <option value="VEHICLE">Vehicle</option>
+          <option value="PHONE">Phone</option>
+          <option value="ADDRESS">Address</option>
+          <option value="LOCATION">Location</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="rootId">Root Entity</label>
+        <select id="rootId"><option value="">Loading...</option></select>
+      </div>
+      <div class="field">
+        <label for="depth">Maximum Depth</label>
+        <select id="depth">
+          <option value="1">1 hop</option>
+          <option value="2">2 hops</option>
+          <option value="3" selected>3 hops</option>
+          <option value="4">4 hops</option>
+          <option value="5">5 hops</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="maxNodes">Maximum Nodes</label>
+        <input id="maxNodes" type="number" min="10" max="500" value="100">
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="button" id="generate">Generate Investigation Tree</button>
+      <button class="secondary-button" id="reset">Reset</button>
+    </div>
+    <p id="status" class="muted"></p>
+  </section>
+
+  <section class="workspace">
+    <div class="panel graph-panel">
+      <div class="graph-title">
+        <div>
+          <h2>Association Map</h2>
+          <div class="graph-help">Root → direct associations → deeper associations</div>
+        </div>
+        <div class="graph-help">Drag • Zoom • Click a link</div>
+      </div>
+      <div class="graph-canvas">
+        <svg id="graph"></svg>
+        <div class="graph-empty" id="graphEmpty">
+         
+        </div>
+        <div class="graph-controls">
+          <button class="graph-control" id="zoomIn" type="button">+</button>
+          <button class="graph-control" id="zoomOut" type="button">−</button>
+          <button class="graph-control" id="zoomReset" type="button">⌂</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel ai-panel">
+      <div class="ai-head">
+        <div>
+          <p class="eyebrow">OLLAMA</p>
+          <h2>AI Analysis</h2>
+        </div>
+        <span class="ai-badge" id="ollamaBadge">Checking…</span>
+      </div>
+
+      <div class="ai-section">
+        <div class="ai-label">Selected connection</div>
+        <div id="selectedConnection" class="muted">Click a graph connection.</div>
+      </div>
+
+      <div id="aiResult" hidden>
+        <div class="ai-section">
+          <div class="ai-label">Summary</div>
+          <div id="aiSummary" class="ai-value"></div>
+        </div>
+        <div class="ai-section">
+          <div class="ai-label">Why are they connected?</div>
+          <div id="aiExplanation" class="ai-value"></div>
+        </div>
+        <div class="ai-section">
+          <div class="ai-label">Evidence</div>
+          <ul id="aiEvidence" class="ai-list"></ul>
+        </div>
+        <div class="ai-section">
+          <div class="ai-label">Investigative significance</div>
+          <div id="aiSignificance" class="ai-value"></div>
+        </div>
+        <div class="ai-section">
+          <div class="ai-label">Limitations</div>
+          <div id="aiLimitations" class="ai-value"></div>
+        </div>
+      </div>
+
+      <div class="ai-actions">
+<button class="button" id="explain" disabled>
+  Generate AI Explanation
+</button>        <div id="aiStatus" class="ai-status muted"></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="panel legend-panel">
+    <h2>How to read this investigation</h2>
+    <p>Each connection is an automatically discovered association from raw intelligence. The map shows leads and relationships, not proof of criminal involvement. Click a connection to inspect its basis and send that verified association to Ollama for explanation.</p>
+    <div id="legend" class="connection-summary"></div>
+  </section>
+</main>
+<script>
+const rootType = document.getElementById('rootType');
+const rootId = document.getElementById('rootId');
+const depth = document.getElementById('depth');
+const maxNodes = document.getElementById('maxNodes');
+const status = document.getElementById('status');
+
+const svg = d3.select('#graph');
+
+const explainButton = document.getElementById('explain');
+const selectedConnection = document.getElementById('selectedConnection');
+const aiResult = document.getElementById('aiResult');
+const aiStatus = document.getElementById('aiStatus');
+const ollamaBadge = document.getElementById('ollamaBadge');
+const graphEmpty = document.getElementById('graphEmpty');
+const zoomIn = document.getElementById('zoomIn');
+const zoomOut = document.getElementById('zoomOut');
+const zoomReset = document.getElementById('zoomReset');
+
+let selectedEdge = null;
+let currentZoom = null;
+let graphViewport = null;
+let currentSimulation = null; // retained for compatibility; layered graph does not use force simulation
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function nodeKey(node) {
+  return `${node.type}:${node.id}`;
+}
+
+function nameFor(node) {
+  return node.name || node.id;
+}
+
+function clearGraph() {
+  if (currentSimulation) {
+    currentSimulation.stop();
+    currentSimulation = null;
+  }
+
+  svg.selectAll('*').remove();
+  if (graphEmpty) graphEmpty.hidden = false;
+}
+
+
+/* =========================
+   LOAD ROOT ENTITIES
+========================= */
+
+async function loadRootEntities() {
+  rootId.innerHTML = '<option value="">Loading...</option>';
+
+  try {
+    const response = await fetch(
+      '/api/entities/' + encodeURIComponent(rootType.value)
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Unable to load entities');
+    }
+
+    const entities = Array.isArray(data.data) ? data.data : [];
+
+    if (!entities.length) {
+      rootId.innerHTML =
+        '<option value="">No records available</option>';
+
+      return;
+    }
+
+    rootId.innerHTML =
+      '<option value="">Select entity</option>' +
+      entities.map(entity => {
+
+        const idKey = Object.keys(entity).find(
+          key =>
+            key.toLowerCase() ===
+            rootType.value.toLowerCase() + 'id'
+        );
+
+        const id = entity[idKey];
+
+        let name = '';
+
+        if (rootType.value === 'PERSON') {
+          name = `${entity.firstName || ''} ${entity.lastName || ''}`.trim();
+        }
+
+        else if (rootType.value === 'CASE') {
+          name = entity.title || '';
+        }
+
+        else if (rootType.value === 'VEHICLE') {
+          name = entity.registrationNumber || '';
+        }
+
+        else if (rootType.value === 'PHONE') {
+          name = entity.phoneNumber || '';
+        }
+
+        else if (rootType.value === 'ADDRESS') {
+          name =
+            `${entity.addressLine || ''}` +
+            `${entity.city ? ', ' + entity.city : ''}`;
+        }
+
+        else if (rootType.value === 'LOCATION') {
+          name = entity.name || '';
+        }
+
+        return `
+          <option value="${escapeHtml(id || '')}">
+            ${escapeHtml(id || '')}
+            ${name ? ' — ' + escapeHtml(name) : ''}
+          </option>
+        `;
+      }).join('');
+
+  } catch (error) {
+    console.error('Root entity loading error:', error);
+
+    rootId.innerHTML =
+      '<option value="">Unable to load</option>';
+
+    status.textContent = error.message;
+  }
+}
+
+
+/* =========================
+   SELECT EDGE
+========================= */
+
+function setSelectedEdge(edge, linkSelection, nodeSelection) {
+  selectedEdge = edge;
+
+  linkSelection.classed(
+    'edge-active',
+    d => d === edge
+  );
+
+  nodeSelection.classed(
+    'selected',
+    d =>
+      nodeKey(d) === edge.source ||
+      nodeKey(d) === edge.target
+  );
+
+  const source = edge.sourceNode;
+  const target = edge.targetNode;
+
+  if (!source || !target) {
+    console.error('Invalid edge:', edge);
+    return;
+  }
+
+  selectedConnection.innerHTML = `
+    <div class="ai-node">
+      <strong>
+        ${escapeHtml(source.type)}:
+        ${escapeHtml(source.name || source.id)}
+      </strong>
+      <span>${escapeHtml(source.id)}</span>
+    </div>
+
+    <div
+      class="muted"
+      style="text-align:center;padding:5px"
+    >
+      ↓ ${escapeHtml(edge.type || 'ASSOCIATION')} ↓
+    </div>
+
+    <div class="ai-node">
+      <strong>
+        ${escapeHtml(target.type)}:
+        ${escapeHtml(target.name || target.id)}
+      </strong>
+      <span>${escapeHtml(target.id)}</span>
+    </div>
+
+    <p
+      class="muted"
+      style="margin-top:8px"
+    >
+      Basis:
+      ${escapeHtml(
+        edge.reason ||
+        'Backend-discovered association'
+      )}
+    </p>
+  `;
+
+  explainButton.disabled = false;
+
+  aiResult.hidden = true;
+  aiStatus.textContent = '';
+}
+
+
+/* =========================
+   RENDER TREE
+========================= */
+
+function renderTree(data) {
+  clearGraph();
+
+  selectedEdge = null;
+  explainButton.disabled = true;
+  selectedConnection.textContent = 'Click a connection to inspect why two records are associated.';
+  aiResult.hidden = true;
+  aiStatus.textContent = '';
+
+  if (!data || !Array.isArray(data.nodes) || !data.nodes.length) {
+    graphEmpty.hidden = false;
+    status.textContent = 'No discovered connections found for this root.';
+    return;
+  }
+
+  graphEmpty.hidden = true;
+
+  const canvas = document.querySelector('.graph-canvas');
+  const width = canvas.clientWidth || 950;
+  const height = canvas.clientHeight || 690;
+
+  const nodes = data.nodes.map((n, i) => ({
+    ...n,
+    key: nodeKey(n),
+    depth: Number(n.depth || 0),
+    _index: i
+  }));
+
+  const nodeMap = new Map(nodes.map(n => [n.key, n]));
+
+  const links = (Array.isArray(data.edges) ? data.edges : [])
+    .map(edge => {
+      const sourceKey =
+        typeof edge.source === 'string'
+          ? edge.source
+          : nodeKey(edge.source);
+
+      const targetKey =
+        typeof edge.target === 'string'
+          ? edge.target
+          : nodeKey(edge.target);
+
+      return {
+        ...edge,
+        source: sourceKey,
+        target: targetKey,
+        sourceNode: nodeMap.get(sourceKey),
+        targetNode: nodeMap.get(targetKey)
+      };
+    })
+    .filter(e => e.sourceNode && e.targetNode);
+
+  const typeColors = {
+    PERSON: '#4d8bb5',
+    CASE: '#9a9fa5',
+    VEHICLE: '#d98b3d',
+    PHONE: '#8b78b8',
+    ADDRESS: '#c28b55',
+    LOCATION: '#62a07f'
+  };
+
+  function shortName(n) {
+    const name = nameFor(n);
+    return String(name || n.id || '').length > 27
+      ? String(name || n.id).slice(0, 26) + '…'
+      : String(name || n.id || '');
+  }
+
+  // Layered layout: every hop gets its own clear column.
+  const maxDepth = Math.max(0, ...nodes.map(n => n.depth));
+  const left = 75;
+  const right = Math.max(left + 300, width - 55);
+  const columnGap = maxDepth
+    ? (right - left) / maxDepth
+    : 0;
+
+  const byDepth = d3.group(nodes, d => d.depth);
+
+  for (const [d, group] of byDepth) {
+    const x = maxDepth ? left + columnGap * d : width / 2;
+    const usableTop = 72;
+    const usableBottom = height - 55;
+    const step = group.length > 1
+      ? (usableBottom - usableTop) / (group.length - 1)
+      : 0;
+
+    group.forEach((n, i) => {
+      n.x = x;
+      n.y = group.length === 1
+        ? height / 2
+        : usableTop + step * i;
+    });
+  }
+
+  svg.attr('viewBox', `0 0 ${width} ${height}`);
+
+  const defs = svg.append('defs');
+
+  defs.append('marker')
+    .attr('id', 'arrow')
+    .attr('viewBox', '0 -4 8 8')
+    .attr('refX', 7)
+    .attr('refY', 0)
+    .attr('markerWidth', 5)
+    .attr('markerHeight', 5)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M0,-4L8,0L0,4')
+    .attr('fill', '#4b6575');
+
+  const viewport = svg.append('g');
+  graphViewport = viewport;
+
+  currentZoom = d3.zoom()
+    .scaleExtent([0.55, 2.2])
+    .on('zoom', event => viewport.attr('transform', event.transform));
+
+  svg.call(currentZoom);
+
+  const graph = viewport.append('g');
+
+  // Depth guide columns.
+  for (let d = 0; d <= maxDepth; d++) {
+    const x = maxDepth ? left + columnGap * d : width / 2;
+
+    graph.append('line')
+      .attr('x1', x)
+      .attr('y1', 45)
+      .attr('x2', x)
+      .attr('y2', height - 35)
+      .attr('stroke', '#183243')
+      .attr('stroke-dasharray', '3 7');
+
+    graph.append('text')
+      .attr('class', 'depth-label')
+      .attr('x', x)
+      .attr('y', 27)
+      .attr('text-anchor', 'middle')
+      .text(d === 0 ? 'ROOT' : `HOP ${d}`);
+  }
+
+  // Curved association lines.
+  const link = graph.selectAll('.graph-link')
+    .data(links)
+    .enter()
+    .append('path')
+    .attr('class', 'graph-link')
+    .attr('marker-end', 'url(#arrow)')
+    .attr('d', edge => {
+      const s = edge.sourceNode;
+      const t = edge.targetNode;
+      const mid = (s.x + t.x) / 2;
+      return `M${s.x},${s.y} C${mid},${s.y} ${mid},${t.y} ${t.x},${t.y}`;
+    })
+    .on('click', (event, edge) => {
+      event.stopPropagation();
+      setSelectedEdge(edge, link, node);
+    });
+
+  // Relationship labels sit on the line, making the reason visible.
+  const labelGroups = graph.selectAll('.link-label-group')
+    .data(links)
+    .enter()
+    .append('g')
+    .attr('class', 'link-label-group')
+    .attr('transform', edge => {
+      const s = edge.sourceNode;
+      const t = edge.targetNode;
+      return `translate(${(s.x + t.x) / 2},${(s.y + t.y) / 2})`;
+    });
+
+  labelGroups.append('rect')
+    .attr('class', 'link-label-bg')
+    .attr('x', -48)
+    .attr('y', -9)
+    .attr('width', 96)
+    .attr('height', 18);
+
+  labelGroups.append('text')
+    .attr('class', 'link-label')
+    .attr('text-anchor', 'middle')
+    .attr('dy', '3')
+    .text(edge =>
+      String(edge.type || 'ASSOCIATION')
+        .replaceAll('_', ' ')
+        .slice(0, 20)
+    );
+
+  const node = graph.selectAll('.graph-node')
+    .data(nodes)
+    .enter()
+    .append('g')
+    .attr('class', d => `graph-node ${d.depth === 0 ? 'root' : ''}`)
+    .attr('transform', d => `translate(${d.x},${d.y})`)
+    .on('click', (event, clickedNode) => {
+      event.stopPropagation();
+
+      const relatedEdge = links.find(edge =>
+        edge.source === clickedNode.key ||
+        edge.target === clickedNode.key
+      );
+
+      if (relatedEdge) {
+        setSelectedEdge(relatedEdge, link, node);
+      }
+    });
+
+  // Cards are wider than circles so the graph is readable without decoding IDs.
+  node.append('rect')
+    .attr('class', 'node-card')
+    .attr('x', -92)
+    .attr('y', -28)
+    .attr('width', 184)
+    .attr('height', 56)
+    .attr('rx', 5);
+
+  node.append('circle')
+    .attr('class', 'node-dot')
+    .attr('cx', -76)
+    .attr('cy', -13)
+    .attr('r', 6)
+    .attr('fill', d => d.depth === 0 ? '#d98b3d' : (typeColors[d.type] || '#6e8796'));
+
+  node.append('text')
+    .attr('class', 'node-type')
+    .attr('x', -63)
+    .attr('y', -9)
+    .attr('fill', d => typeColors[d.type] || '#9fb1bc')
+    .text(d => d.type);
+
+  node.append('text')
+    .attr('class', 'node-name')
+    .attr('x', -76)
+    .attr('y', 9)
+    .text(d => shortName(d));
+
+  node.append('text')
+    .attr('class', 'node-id')
+    .attr('x', -76)
+    .attr('y', 23)
+    .text(d => String(d.id || '').length > 29
+      ? String(d.id).slice(0, 28) + '…'
+      : String(d.id || ''));
+
+  // Simple drag-to-reposition while keeping the graph understandable.
+  node.call(
+    d3.drag()
+      .on('start', (event, d) => {
+        d._dragX = d.x;
+        d._dragY = d.y;
+      })
+      .on('drag', (event, d) => {
+        d.x = Math.max(100, Math.min(width - 100, event.x));
+        d.y = Math.max(60, Math.min(height - 55, event.y));
+
+        node.attr('transform', n => `translate(${n.x},${n.y})`);
+
+        link.attr('d', edge => {
+          const s = edge.sourceNode;
+          const t = edge.targetNode;
+          const mid = (s.x + t.x) / 2;
+          return `M${s.x},${s.y} C${mid},${s.y} ${mid},${t.y} ${t.x},${t.y}`;
+        });
+
+        labelGroups.attr('transform', edge =>
+          `translate(${(edge.sourceNode.x + edge.targetNode.x) / 2},${(edge.sourceNode.y + edge.targetNode.y) / 2})`
+        );
+      })
+  );
+
+  // Fit the complete map into the viewport initially.
+  const initialScale = Math.min(
+    1,
+    (width - 80) / Math.max(width, 1),
+    (height - 80) / Math.max(height, 1)
+  );
+
+  svg.call(
+    currentZoom.transform,
+    d3.zoomIdentity.translate(0, 0).scale(initialScale)
+  );
+
+  status.textContent =
+    `${nodes.length} entities • ${links.length} associations • ${maxDepth} hop${maxDepth === 1 ? '' : 's'}`;
+
+  document.getElementById('legend').innerHTML = [
+    ...new Set(
+      links.map(edge =>
+        `<span>${escapeHtml(
+          (edge.type || 'ASSOCIATION').replaceAll('_', ' ')
+        )}</span>`
+      )
+    )
+  ].join('');
+
+  // Clear selection when the empty map background is clicked.
+  svg.on('click', () => {
+    if (!selectedEdge) return;
+    selectedEdge = null;
+    explainButton.disabled = true;
+    selectedConnection.textContent = 'Click a connection to inspect why two records are associated.';
+    link.classed('edge-active', false);
+    node.classed('selected', false);
+    aiResult.hidden = true;
+    aiStatus.textContent = '';
+  });
+}
+
+
+/* =========================
+   GENERATE TREE
+========================= */
+
+async function generate() {
+
+  if (!rootId.value) {
+    status.textContent =
+      'Select a root entity first.';
+
+    return;
+  }
+
+  status.textContent =
+    'Discovering relationships and building tree...';
+
+  try {
+
+    const url =
+      `/api/graph?rootType=${encodeURIComponent(rootType.value)}` +
+      `&rootId=${encodeURIComponent(rootId.value)}` +
+      `&depth=${encodeURIComponent(depth.value)}` +
+      `&maxNodes=${encodeURIComponent(maxNodes.value)}`;
+
+
+    const response =
+      await fetch(url);
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.message ||
+        'Unable to generate tree'
+      );
+    }
+
+
+    renderTree(data.data);
+
+  } catch (error) {
+
+    console.error(
+      'Generate tree error:',
+      error
+    );
+
+    status.textContent =
+      error.message;
+  }
+}
+
+
+/* =========================
+   CHECK OLLAMA
+========================= */
+
+async function checkOllama() {
+
+  try {
+
+    const response =
+      await fetch('/api/ai/health');
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.message ||
+        'Ollama unavailable'
+      );
+    }
+
+
+    if (data.data.modelAvailable) {
+
+      ollamaBadge.textContent =
+        `${data.data.model} ready`;
+
+      ollamaBadge.classList.add(
+        'ai-success'
+      );
+
+    } else {
+
+      ollamaBadge.textContent =
+        `${data.data.model} missing`;
+
+      ollamaBadge.classList.add(
+        'ai-error'
+      );
+
+      aiStatus.textContent =
+        `Ollama is running, but model "${data.data.model}" is not installed.`;
+    }
+
+  } catch (error) {
+
+    console.error(
+      'Ollama health error:',
+      error
+    );
+
+    ollamaBadge.textContent =
+      'Offline';
+
+    ollamaBadge.classList.add(
+      'ai-error'
+    );
+
+    aiStatus.textContent =
+      'Ollama is not reachable. Start Ollama before generating an explanation.';
+  }
+}
+
+
+/* =========================
+   AI EXPLANATION
+========================= */
+
+async function explainSelected() {
+
+  console.log(
+    '🔥 AI BUTTON CLICKED',
+    selectedEdge
+  );
+
+
+  if (!selectedEdge) {
+
+    aiStatus.textContent =
+      'Select a graph connection first.';
+
+    return;
+  }
+
+
+  explainButton.disabled = true;
+
+  aiStatus.textContent =
+    'Ollama is analyzing the backend-supplied evidence...';
+
+  aiStatus.className =
+    'ai-status muted';
+
+
+  try {
+
+    const payload = {
+
+      source: {
+        type: selectedEdge.sourceNode.type,
+        id: selectedEdge.sourceNode.id
+      },
+
+      target: {
+        type: selectedEdge.targetNode.type,
+        id: selectedEdge.targetNode.id
+      },
+
+      relationship:
+        selectedEdge.type
+    };
+
+
+    console.log(
+      '📤 Sending AI request:',
+      payload
+    );
+
+
+    const response =
+      await fetch(
+        '/api/ai/explain',
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json'
+          },
+
+          body:
+            JSON.stringify(payload)
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      '📥 AI response:',
+      data
+    );
+
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+
+      throw new Error(
+        data.message ||
+        'Unable to generate AI explanation'
+      );
+    }
+
+
+    const ai =
+      data.data.ai || {};
+
+
+    document.getElementById(
+      'aiSummary'
+    ).textContent =
+      ai.summary || '—';
+
+
+    document.getElementById(
+      'aiExplanation'
+    ).textContent =
+      ai.relationshipExplanation || '—';
+
+
+    document.getElementById(
+      'aiSignificance'
+    ).textContent =
+      ai.investigativeSignificance || '—';
+
+
+    document.getElementById(
+      'aiLimitations'
+    ).textContent =
+      ai.limitations || '—';
+
+
+    const evidence =
+      Array.isArray(ai.evidence)
+        ? ai.evidence
+        : [];
+
+
+    document.getElementById(
+      'aiEvidence'
+    ).innerHTML =
+      evidence.length
+        ? evidence
+            .map(
+              item =>
+                `<li>${escapeHtml(item)}</li>`
+            )
+            .join('')
+        : '<li>No separate evidence points returned.</li>';
+
+
+    aiResult.hidden = false;
+
+
+    aiStatus.textContent =
+      `Generated with ${escapeHtml(
+        ai.model || 'Ollama'
+      )}.`;
+
+    aiStatus.className =
+      'ai-status ai-success';
+
+
+  } catch (error) {
+
+    console.error(
+      'AI explanation error:',
+      error
+    );
+
+    aiStatus.textContent =
+      error.message;
+
+    aiStatus.className =
+      'ai-status ai-error';
+
+  } finally {
+
+    explainButton.disabled =
+      !selectedEdge;
+  }
+}
+
+
+/* =========================
+   EVENT LISTENERS
+========================= */
+
+rootType.addEventListener(
+  'change',
+  loadRootEntities
+);
+
+
+document
+  .getElementById('generate')
+  .addEventListener(
+    'click',
+    generate
+  );
+
+
+document
+  .getElementById('reset')
+  .addEventListener(
+    'click',
+    () => {
+
+      clearGraph();
+
+      selectedEdge = null;
+
+      explainButton.disabled = true;
+
+      selectedConnection.textContent =
+        'Click a graph connection.';
+
+      aiResult.hidden = true;
+
+      aiStatus.textContent = '';
+
+      status.textContent = '';
+    }
+  );
+
+
+explainButton.addEventListener(
+  'click',
+  explainSelected
+);
+
+
+/* =========================
+   INITIAL LOAD
+========================= */
+
+console.log(
+  '✅ Graph JavaScript loaded'
+);
+
+zoomIn.addEventListener('click', () => {
+  svg.transition().duration(180).call(currentZoom.scaleBy, 1.2);
+});
+
+zoomOut.addEventListener('click', () => {
+  svg.transition().duration(180).call(currentZoom.scaleBy, 0.83);
+});
+
+zoomReset.addEventListener('click', () => {
+  svg.transition().duration(180).call(currentZoom.transform, d3.zoomIdentity);
+});
+
+
+loadRootEntities();
+
+checkOllama();
+
+</script>
+</body>
+</html>

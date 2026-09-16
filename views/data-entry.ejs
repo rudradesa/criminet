@@ -1,0 +1,1542 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add <%= schema.label %></title>
+    <link rel="stylesheet" href="/css/style.css">
+
+<style>
+/* =========================================================
+   CRIMINAL INTELLIGENCE SYSTEM — POLICE TERMINAL UI
+   Visual redesign only. Existing EJS + JavaScript preserved.
+   ========================================================= */
+
+:root{
+    --navy:#0b1824;
+    --navy2:#102536;
+    --navy3:#15334a;
+    --blue:#2d668d;
+    --blue2:#3e7fa8;
+    --orange:#d58a3c;
+    --orange2:#e5a45b;
+    --bg:#0a141e;
+    --panel:#101f2c;
+    --panel2:#132838;
+    --border:#2b465a;
+    --border2:#38566a;
+    --text:#dce3e8;
+    --muted:#8fa1ae;
+    --white:#f5f6f7;
+    --green:#55aa7d;
+    --red:#c96464;
+}
+
+*{box-sizing:border-box}
+
+html{min-height:100%;background:var(--bg)}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 75% 0%, rgba(48,101,135,.13), transparent 32%),
+        linear-gradient(180deg,#0d1b28 0%,#09131d 100%);
+    color:var(--text);
+    font-family:"Segoe UI",Arial,sans-serif;
+    font-size:15px;
+    line-height:1.55;
+}
+
+/* page shell */
+
+.wrap.narrow{
+    width:min(1180px,calc(100% - 48px));
+    margin:0 auto;
+    padding:28px 0 55px;
+}
+
+/* top navigation */
+
+.back{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:#b8c8d2;
+    text-decoration:none;
+    font-size:13px;
+    padding:9px 13px;
+    border:1px solid var(--border);
+    background:#102333;
+    margin-bottom:22px;
+    transition:.15s ease;
+}
+
+.back:hover{
+    color:#fff;
+    border-color:var(--blue2);
+    background:#163047;
+}
+
+/* header */
+
+.page-header{
+    position:relative;
+    overflow:hidden;
+    padding:27px 30px 29px;
+    margin-bottom:22px;
+    border:1px solid var(--border);
+    background:
+        linear-gradient(90deg,rgba(18,51,73,.98),rgba(14,34,49,.97)),
+        #102536;
+}
+
+.page-header:after{
+    content:"INTELLIGENCE";
+    position:absolute;
+    right:22px;
+    bottom:-22px;
+    color:rgba(255,255,255,.025);
+    font-size:72px;
+    font-weight:800;
+    letter-spacing:4px;
+    pointer-events:none;
+}
+
+.eyebrow{
+    margin:0 0 6px;
+    color:var(--orange2);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:2px;
+    text-transform:uppercase;
+}
+
+.page-header h1{
+    margin:0;
+    color:var(--white);
+    font-size:32px;
+    line-height:1.2;
+    font-weight:650;
+}
+
+.page-header .muted{
+    max-width:820px;
+    margin:9px 0 0;
+    color:#aab9c3;
+    font-size:13px;
+}
+
+/* forms */
+
+.form{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.form-section,
+.panel{
+    border:1px solid var(--border);
+    background:rgba(16,31,44,.97);
+    box-shadow:0 8px 24px rgba(0,0,0,.12);
+}
+
+.form-section{
+    padding:0;
+}
+
+.section-heading{
+    padding:18px 22px 16px;
+    border-bottom:1px solid var(--border);
+    background:#122737;
+}
+
+.section-heading h2,
+.panel h2{
+    margin:0;
+    color:var(--white);
+    font-size:17px;
+    font-weight:650;
+}
+
+.section-heading p{
+    margin:4px 0 0;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:0;
+    padding:4px 22px 12px;
+}
+
+.field{
+    padding:13px 10px;
+}
+
+.field.full{
+    grid-column:1/-1;
+}
+
+.field label,
+.relationship-field label{
+    display:block;
+    margin-bottom:7px;
+    color:#c9d3d9;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.15px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    border:1px solid #345064;
+    border-radius:2px;
+    outline:none;
+    background:#0b1823;
+    color:#edf1f3;
+    font:inherit;
+    font-size:14px;
+    padding:11px 12px;
+    transition:.15s ease;
+}
+
+input,
+select{
+    min-height:43px;
+}
+
+textarea{
+    min-height:105px;
+    resize:vertical;
+}
+
+input::placeholder,
+textarea::placeholder{
+    color:#657885;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:var(--blue2);
+    box-shadow:0 0 0 2px rgba(62,127,168,.12);
+    background:#0d1c28;
+}
+
+select{
+    cursor:pointer;
+}
+
+/* relationship blocks */
+
+#personsContainer,
+#locationsContainer,
+#phonesContainer,
+#vehiclesContainer,
+#suspectsContainer{
+    padding:14px 22px 4px;
+}
+
+.relationship-row{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 145px auto;
+    gap:12px;
+    align-items:end;
+    padding:14px;
+    margin-bottom:10px;
+    border:1px solid #294355;
+    background:#0d1c28;
+}
+
+.relationship-row:not(.person-row):not(.suspect-row){
+    grid-template-columns:minmax(0,1fr) auto;
+}
+
+.relationship-field{
+    min-width:0;
+}
+
+.relationship-field select{
+    background:#0a1721;
+}
+
+.remove-button{
+    min-height:43px;
+    padding:0 15px;
+    border:1px solid #754848;
+    background:#251719;
+    color:#df9292;
+    cursor:pointer;
+    font:inherit;
+    font-size:12px;
+    font-weight:600;
+}
+
+.remove-button:hover{
+    border-color:var(--red);
+    background:#321b1c;
+    color:#fff;
+}
+
+.secondary-button{
+    margin:8px 22px 20px;
+    min-height:40px;
+    padding:0 16px;
+    border:1px solid #3c6177;
+    background:#17334a;
+    color:#dbe7ee;
+    cursor:pointer;
+    font:inherit;
+    font-size:13px;
+    font-weight:600;
+}
+
+.secondary-button:hover{
+    background:#21455f;
+    border-color:var(--blue2);
+}
+
+#suspectHelp{
+    margin:0 22px 20px;
+    color:var(--muted);
+    font-size:11px;
+}
+
+/* submit */
+
+.submit-area{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:4px 0 3px;
+}
+
+.button{
+    min-height:45px;
+    padding:0 24px;
+    border:1px solid #e2a15a;
+    background:var(--orange);
+    color:#17110a;
+    cursor:pointer;
+    font:inherit;
+    font-size:14px;
+    font-weight:750;
+    letter-spacing:.2px;
+    box-shadow:0 4px 14px rgba(0,0,0,.18);
+}
+
+.button:hover{
+    background:var(--orange2);
+}
+
+.message{
+    min-height:24px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.message.success{color:#73c79a}
+.message.error{color:#df7f7f}
+
+/* records panel */
+
+.panel{
+    margin-top:22px;
+    overflow:hidden;
+}
+
+.panel h2{
+    padding:17px 22px;
+    border-bottom:1px solid var(--border);
+    background:#122737;
+}
+
+#records{
+    padding:18px 22px;
+    color:var(--muted);
+}
+
+/* recent records */
+
+.entity-record,
+.case-record{
+    margin-bottom:12px;
+    padding:17px;
+    border:1px solid #294355;
+    background:#0d1c28;
+}
+
+.entity-record:last-child,
+.case-record:last-child{
+    margin-bottom:0;
+}
+
+.entity-record-header,
+.case-record-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:10px;
+}
+
+.entity-id{
+    display:inline-block;
+    color:var(--orange2);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.6px;
+    text-decoration:none;
+}
+
+.entity-id:hover{
+    color:#fff;
+    text-decoration:underline;
+}
+
+.entity-record h3,
+.case-record h3{
+    margin:3px 0 0;
+    color:#eef2f4;
+    font-size:16px;
+    font-weight:650;
+}
+
+.entity-record pre{
+    margin:12px 0 0;
+    padding:12px;
+    max-height:180px;
+    overflow:auto;
+    border:1px solid #253e4f;
+    background:#09151e;
+    color:#9fb1bd;
+    font:12px/1.5 Consolas,Monaco,monospace;
+}
+
+.small-button{
+    flex:none;
+    padding:8px 11px;
+    border:1px solid #3a5b70;
+    background:#153147;
+    color:#c8d7df;
+    text-decoration:none;
+    font-size:11px;
+    font-weight:600;
+}
+
+.small-button:hover{
+    border-color:var(--blue2);
+    color:#fff;
+}
+
+.case-record p{
+    margin:8px 0 13px;
+    color:#a8b7c0;
+    font-size:13px;
+}
+
+.status-badge{
+    flex:none;
+    padding:5px 9px;
+    border:1px solid #486654;
+    background:#13261d;
+    color:#8dcca7;
+    font-size:10px;
+    font-weight:750;
+    letter-spacing:.7px;
+}
+
+.case-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    padding:10px 0;
+    border-top:1px solid #243c4c;
+    border-bottom:1px solid #243c4c;
+    color:#8295a2;
+    font-size:11px;
+}
+
+.case-meta strong{
+    color:#cbd5db;
+    font-weight:600;
+}
+
+.connection-summary{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:12px;
+}
+
+.connection-summary span,
+.person-chip{
+    border:1px solid #304b5d;
+    background:#112534;
+    color:#aebdc6;
+    padding:6px 9px;
+    font-size:10px;
+}
+
+.person-list{
+    margin-top:15px;
+}
+
+.person-list > strong{
+    display:block;
+    margin-bottom:7px;
+    color:#d7e0e5;
+    font-size:12px;
+}
+
+.person-chip{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:5px;
+}
+
+.person-chip span:first-child{
+    color:var(--orange2);
+    font-weight:700;
+}
+
+/* responsive */
+
+@media(max-width:800px){
+    .wrap.narrow{
+        width:min(100% - 28px,1180px);
+        padding-top:18px;
+    }
+
+    .page-header{
+        padding:22px;
+    }
+
+    .page-header h1{
+        font-size:27px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .field.full{
+        grid-column:auto;
+    }
+
+    .relationship-row,
+    .relationship-row:not(.person-row):not(.suspect-row){
+        grid-template-columns:1fr;
+    }
+
+    .submit-area{
+        align-items:stretch;
+        flex-direction:column;
+    }
+
+    .button{
+        width:100%;
+    }
+
+    .entity-record-header,
+    .case-record-header{
+        flex-direction:column;
+    }
+}
+
+@media(max-width:520px){
+    .wrap.narrow{
+        width:calc(100% - 20px);
+    }
+
+    .section-heading{
+        padding:15px;
+    }
+
+    #personsContainer,
+    #locationsContainer,
+    #phonesContainer,
+    #vehiclesContainer,
+    #suspectsContainer{
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .secondary-button{
+        margin-left:12px;
+        margin-right:12px;
+    }
+
+    #suspectHelp{
+        margin-left:12px;
+        margin-right:12px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<main class="wrap narrow">
+
+    <a href="/dashboard" class="back">← Dashboard</a>
+
+    <header class="page-header">
+        <p class="eyebrow"><%= type %></p>
+        <h1>Add <%= schema.label %></h1>
+        <p class="muted">
+            Enter raw intelligence records. Relationships are discovered automatically by the analysis engine; this form does not create Neo4j relationships.
+        </p>
+    </header>
+
+    <% if (type === 'CASE') { %>
+
+    <form id="entityForm" class="form">
+
+        <section class="form-section">
+            <div class="section-heading">
+                <h2>Case Information</h2>
+                <p>Enter the basic information about this case.</p>
+            </div>
+
+            <div class="form-grid">
+
+                <div class="field full">
+                    <label for="title">Title *</label>
+                    <input
+                        id="title"
+                        name="title"
+                        type="text"
+                        placeholder="Enter case title"
+                        required
+                    >
+                </div>
+
+                <div class="field full">
+                    <label for="description">Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="5"
+                        placeholder="Enter case description"
+                    ></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="caseType">Case Type</label>
+                    <select id="caseType" name="caseType">
+                        <option value="">Select case type</option>
+                        <option value="THEFT">THEFT</option>
+                        <option value="ASSAULT">ASSAULT</option>
+                        <option value="FRAUD">FRAUD</option>
+                        <option value="OTHER">OTHER</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="">Select status</option>
+                        <option value="UNKNOWN">UNKNOWN</option>
+                        <option value="OPEN">OPEN</option>
+                        <option value="CLOSED">CLOSED</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="openedDate">Opened Date</label>
+                    <input id="openedDate" name="openedDate" type="date">
+                </div>
+
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="section-heading">
+                <h2>Persons Involved</h2>
+                <p>Store raw Person IDs in the case record. The analysis engine will use these references to discover associations.</p>
+            </div>
+
+            <div id="personsContainer"></div>
+
+            <button type="button" class="secondary-button" id="addPersonButton">
+                + Add Person
+            </button>
+        </section>
+
+        <section class="form-section">
+            <div class="section-heading">
+                <h2>Locations</h2>
+                <p>Store raw Location IDs in the case record. No Neo4j relationship is created.</p>
+            </div>
+
+            <div id="locationsContainer"></div>
+
+            <button type="button" class="secondary-button" id="addLocationButton">
+                + Add Location
+            </button>
+        </section>
+
+        <section class="form-section">
+            <div class="section-heading">
+                <h2>Phones</h2>
+                <p>Store raw Phone IDs in the case record. No Neo4j relationship is created.</p>
+            </div>
+
+            <div id="phonesContainer"></div>
+
+            <button type="button" class="secondary-button" id="addPhoneButton">
+                + Add Phone
+            </button>
+        </section>
+
+        <section class="form-section">
+            <div class="section-heading">
+                <h2>Vehicles</h2>
+                <p>Store raw Vehicle IDs in the case record. No Neo4j relationship is created.</p>
+            </div>
+
+            <div id="vehiclesContainer"></div>
+
+            <button type="button" class="secondary-button" id="addVehicleButton">
+                + Add Vehicle
+            </button>
+        </section>
+
+        <div class="submit-area">
+            <button class="button" type="submit">Save Case</button>
+            <div id="message" class="message"></div>
+        </div>
+
+    </form>
+
+    <section class="panel">
+        <h2>Recent Cases</h2>
+        <div id="records">Loading...</div>
+    </section>
+
+    <% } else { %>
+
+    <form id="entityForm" class="form">
+
+        <div class="form-grid">
+
+            <% schema.fields.forEach(field => {
+                const label = field
+                    .replace(/([A-Z])/g, ' $1')
+                    .replace(/^./, s => s.toUpperCase());
+            %>
+
+            <div class="field">
+
+                <label for="<%= field %>">
+                    <%= label %>
+                    <% if (type === 'PERSON' && field === 'firstName') { %>
+                        *
+                    <% } %>
+                </label>
+
+                <% if (['gender', 'status', 'caseType', 'vehicleType'].includes(field)) { %>
+
+                    <select id="<%= field %>" name="<%= field %>">
+                        <option value="">Select</option>
+
+                        <% if (field === 'gender') { %>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+
+                        <% } else if (field === 'status') { %>
+                            <option value="UNKNOWN">UNKNOWN</option>
+                            <option value="OPEN">OPEN</option>
+                            <option value="CLOSED">CLOSED</option>
+
+                        <% } else if (field === 'caseType') { %>
+                            <option value="THEFT">THEFT</option>
+                            <option value="ASSAULT">ASSAULT</option>
+                            <option value="FRAUD">FRAUD</option>
+                            <option value="OTHER">OTHER</option>
+
+                        <% } else if (field === 'vehicleType') { %>
+                            <option value="CAR">CAR</option>
+                            <option value="BIKE">BIKE</option>
+                            <option value="TRUCK">TRUCK</option>
+                            <option value="OTHER">OTHER</option>
+                        <% } %>
+                    </select>
+
+                <% } else if (field === 'description') { %>
+
+                    <textarea id="<%= field %>" name="<%= field %>" rows="4"></textarea>
+
+                <% } else { %>
+
+                    <input
+                        id="<%= field %>"
+                        name="<%= field %>"
+                        type="<%=
+                            field.includes('Date') || field === 'openedDate'
+                                ? 'date'
+                                : (
+                                    ['latitude', 'longitude'].includes(field)
+                                        ? 'number'
+                                        : 'text'
+                                )
+                        %>"
+                        <% if (['latitude', 'longitude'].includes(field)) { %>
+                            step="any"
+                        <% } %>
+                        <% if (type === 'PERSON' && field === 'firstName') { %>
+                            required
+                        <% } %>
+                    >
+
+                <% } %>
+
+            </div>
+
+            <% }) %>
+
+        </div>
+
+        <% if (['VEHICLE', 'PHONE', 'ADDRESS'].includes(type)) { %>
+
+        <section class="form-section">
+            <div class="section-heading">
+                <h2>Associated Suspects</h2>
+                <p>Store raw Person IDs on this record. The analysis engine discovers the association later.</p>
+            </div>
+
+            <div id="suspectsContainer"></div>
+
+            <button type="button" class="secondary-button" id="addSuspectButton">
+                + Add Suspect
+            </button>
+
+            <p id="suspectHelp" class="muted"></p>
+        </section>
+
+        <% } %>
+
+        <div class="submit-area">
+            <button class="button" type="submit">
+                Save <%= schema.label %>
+            </button>
+            <div id="message" class="message"></div>
+        </div>
+
+    </form>
+
+    <section class="panel">
+        <h2>Recent records</h2>
+        <div id="records">Loading...</div>
+    </section>
+
+    <% } %>
+
+</main>
+
+<script type="application/json" id="caseOptionsData"><%- JSON.stringify(caseOptions || {}) %></script>
+
+<script>
+const type = '<%= type %>';
+
+const caseOptionsElement = document.getElementById('caseOptionsData');
+const caseOptions = caseOptionsElement
+    ? JSON.parse(caseOptionsElement.textContent || '{}')
+    : {};
+
+const persons = Array.isArray(caseOptions.persons)
+    ? caseOptions.persons
+    : [];
+
+const locations = Array.isArray(caseOptions.locations)
+    ? caseOptions.locations
+    : [];
+
+const phones = Array.isArray(caseOptions.phones)
+    ? caseOptions.phones
+    : [];
+
+const vehicles = Array.isArray(caseOptions.vehicles)
+    ? caseOptions.vehicles
+    : [];
+
+let suspects = [];
+
+const form = document.getElementById('entityForm');
+const messageElement = document.getElementById('message');
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+function personOptionsHtml() {
+    if (!persons.length) {
+        return '<option value="">No persons available</option>';
+    }
+
+    return `
+        <option value="">Select person</option>
+        ${persons.map(person => {
+            const name = `${person.firstName || ''} ${person.lastName || ''}`.trim();
+
+            return `
+                <option value="${escapeHtml(person.id)}">
+                    ${escapeHtml(person.id)}
+                    ${name ? ` — ${escapeHtml(name)}` : ''}
+                </option>
+            `;
+        }).join('')}
+    `;
+}
+
+function locationOptionsHtml() {
+    if (!locations.length) {
+        return '<option value="">No locations available</option>';
+    }
+
+    return `
+        <option value="">Select location</option>
+        ${locations.map(location => {
+            const extra = [location.name, location.city]
+                .filter(Boolean)
+                .join(' — ');
+
+            return `
+                <option value="${escapeHtml(location.id)}">
+                    ${escapeHtml(location.id)}
+                    ${extra ? ` — ${escapeHtml(extra)}` : ''}
+                </option>
+            `;
+        }).join('')}
+    `;
+}
+
+function phoneOptionsHtml() {
+    if (!phones.length) {
+        return '<option value="">No phones available</option>';
+    }
+
+    return `
+        <option value="">Select phone</option>
+        ${phones.map(phone => `
+            <option value="${escapeHtml(phone.id)}">
+                ${escapeHtml(phone.id)}
+                ${phone.phoneNumber ? ` — ${escapeHtml(phone.phoneNumber)}` : ''}
+            </option>
+        `).join('')}
+    `;
+}
+
+function vehicleOptionsHtml() {
+    if (!vehicles.length) {
+        return '<option value="">No vehicles available</option>';
+    }
+
+    return `
+        <option value="">Select vehicle</option>
+        ${vehicles.map(vehicle => `
+            <option value="${escapeHtml(vehicle.id)}">
+                ${escapeHtml(vehicle.id)}
+                ${vehicle.registrationNumber
+                    ? ` — ${escapeHtml(vehicle.registrationNumber)}`
+                    : ''}
+            </option>
+        `).join('')}
+    `;
+}
+
+function suspectOptionsHtml() {
+    // Just like the CASE form, suspects come from the existing PERSON records.
+    if (!persons.length) {
+        return '<option value="">No Person records available</option>';
+    }
+
+    return `
+        <option value="">Select person</option>
+        ${persons.map(person => {
+            const name = `${person.firstName || ''} ${person.lastName || ''}`.trim();
+            const status = person.status ? ` — ${person.status}` : '';
+
+            return `
+                <option value="${escapeHtml(person.id)}">
+                    ${escapeHtml(person.id)}
+                    ${name ? ` — ${escapeHtml(name)}` : ''}
+                    ${status ? escapeHtml(status) : ''}
+                </option>
+            `;
+        }).join('')}
+    `;
+}
+
+function addSuspect() {
+    const container = document.getElementById('suspectsContainer');
+    if (!container) return;
+
+    const row = document.createElement('div');
+    row.className = 'relationship-row suspect-row';
+
+    row.innerHTML = `
+        <div class="relationship-field">
+            <label>Person</label>
+            <select class="suspect-id">
+                ${suspectOptionsHtml()}
+            </select>
+        </div>
+
+        <div class="relationship-field">
+            <label>Role</label>
+            <select class="suspect-role">
+                <option value="SUSPECT">SUSPECT</option>
+            </select>
+        </div>
+
+        <button type="button" class="remove-button">Remove</button>
+    `;
+
+    row.querySelector('.remove-button').addEventListener('click', () => {
+        row.remove();
+    });
+
+    container.appendChild(row);
+}
+
+async function loadSuspects() {
+    if (!['VEHICLE', 'PHONE', 'ADDRESS'].includes(type)) return;
+
+    const help = document.getElementById('suspectHelp');
+
+    try {
+        // Use the same PERSON data used by the CASE form.
+        const response = await fetch('/api/entities/PERSON');
+        const json = await response.json();
+
+        if (!response.ok || !json.success) {
+            throw new Error(json.message || 'Unable to load Person records.');
+        }
+
+        suspects = Array.isArray(json.data) ? json.data : [];
+
+        if (help) {
+            help.textContent = suspects.length
+                ? `${suspects.length} Person record(s) available. Select the person and keep role as SUSPECT.`
+                : 'No Person records currently exist. Add a Person first.';
+        }
+
+    } catch (error) {
+        console.error(error);
+        suspects = [];
+
+        if (help) {
+            help.textContent = 'Unable to load Person records.';
+        }
+    }
+}
+
+function addPerson() {
+    const container = document.getElementById('personsContainer');
+    const row = document.createElement('div');
+
+    row.className = 'relationship-row person-row';
+
+    row.innerHTML = `
+        <div class="relationship-field">
+            <label>Person</label>
+            <select class="person-id">
+                ${personOptionsHtml()}
+            </select>
+        </div>
+
+        <div class="relationship-field">
+            <label>Role</label>
+            <select class="person-role">
+                <option value="SUSPECT">SUSPECT</option>
+                <option value="PERSON_OF_INTEREST">PERSON OF INTEREST</option>
+                <option value="WITNESS">WITNESS</option>
+            </select>
+        </div>
+
+        <button type="button" class="remove-button">Remove</button>
+    `;
+
+    row.querySelector('.remove-button').addEventListener('click', () => {
+        row.remove();
+    });
+
+    container.appendChild(row);
+}
+
+function addLocation() {
+    const container = document.getElementById('locationsContainer');
+    const row = document.createElement('div');
+
+    row.className = 'relationship-row';
+
+    row.innerHTML = `
+        <div class="relationship-field">
+            <label>Location</label>
+            <select class="location-id">
+                ${locationOptionsHtml()}
+            </select>
+        </div>
+
+        <button type="button" class="remove-button">Remove</button>
+    `;
+
+    row.querySelector('.remove-button').addEventListener('click', () => {
+        row.remove();
+    });
+
+    container.appendChild(row);
+}
+
+function addPhone() {
+    const container = document.getElementById('phonesContainer');
+    const row = document.createElement('div');
+
+    row.className = 'relationship-row';
+
+    row.innerHTML = `
+        <div class="relationship-field">
+            <label>Phone</label>
+            <select class="phone-id">
+                ${phoneOptionsHtml()}
+            </select>
+        </div>
+
+        <button type="button" class="remove-button">Remove</button>
+    `;
+
+    row.querySelector('.remove-button').addEventListener('click', () => {
+        row.remove();
+    });
+
+    container.appendChild(row);
+}
+
+function addVehicle() {
+    const container = document.getElementById('vehiclesContainer');
+    const row = document.createElement('div');
+
+    row.className = 'relationship-row';
+
+    row.innerHTML = `
+        <div class="relationship-field">
+            <label>Vehicle</label>
+            <select class="vehicle-id">
+                ${vehicleOptionsHtml()}
+            </select>
+        </div>
+
+        <button type="button" class="remove-button">Remove</button>
+    `;
+
+    row.querySelector('.remove-button').addEventListener('click', () => {
+        row.remove();
+    });
+
+    container.appendChild(row);
+}
+
+if (['VEHICLE', 'PHONE', 'ADDRESS'].includes(type)) {
+    const addSuspectButton = document.getElementById('addSuspectButton');
+
+    if (addSuspectButton) {
+        addSuspectButton.addEventListener('click', addSuspect);
+    }
+
+    loadSuspects().then(() => {
+        // Start with one suspect selector after the suspect list is loaded.
+        addSuspect();
+    });
+}
+
+if (type === 'CASE') {
+    document.getElementById('addPersonButton')
+        .addEventListener('click', addPerson);
+
+    document.getElementById('addLocationButton')
+        .addEventListener('click', addLocation);
+
+    document.getElementById('addPhoneButton')
+        .addEventListener('click', addPhone);
+
+    document.getElementById('addVehicleButton')
+        .addEventListener('click', addVehicle);
+}
+
+async function loadRecords() {
+    const recordsElement = document.getElementById('records');
+
+    try {
+        const response = await fetch('/api/entities/' + type);
+        const json = await response.json();
+
+        if (!json.success) {
+            recordsElement.textContent =
+                json.message || 'Unable to load records.';
+            return;
+        }
+
+        if (!json.data.length) {
+            recordsElement.textContent =
+                type === 'CASE'
+                    ? 'No cases yet.'
+                    : 'No records yet.';
+            return;
+        }
+
+        if (type !== 'CASE') {
+            const idField = type.toLowerCase() + 'Id';
+            recordsElement.innerHTML = json.data.map(record => `
+                <article class="entity-record">
+                    <div class="entity-record-header">
+                        <div>
+                            <a class="entity-id" href="/entity/${encodeURIComponent(type)}/${encodeURIComponent(record[idField] || '')}">
+                                ${escapeHtml(record[idField] || 'Unknown ID')}
+                            </a>
+                            <h3>${escapeHtml(entityTitle(record, type))}</h3>
+                        </div>
+                        <a class="small-button" href="/entity/${encodeURIComponent(type)}/${encodeURIComponent(record[idField] || '')}">View details</a>
+                    </div>
+                    <pre>${escapeHtml(JSON.stringify(record, null, 2))}</pre>
+                </article>
+            `).join('');
+            return;
+        }
+
+        recordsElement.innerHTML =
+            json.data.map(renderCaseRecord).join('');
+
+    } catch (error) {
+        console.error(error);
+        recordsElement.textContent = 'Unable to load records.';
+    }
+}
+
+function entityTitle(record, entityType) {
+    if (entityType === 'PERSON') {
+        return `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Person';
+    }
+    if (entityType === 'VEHICLE') return `${record.make || ''} ${record.model || ''}`.trim() || 'Vehicle';
+    if (entityType === 'PHONE') return record.phoneNumber || 'Phone';
+    if (entityType === 'ADDRESS') return `${record.addressLine || ''}${record.city ? ', ' + record.city : ''}` || 'Address';
+    if (entityType === 'LOCATION') return record.name || 'Location';
+    return entityType;
+}
+
+function renderCaseRecord(caseData) {
+    const casePersons =
+        Array.isArray(caseData.persons)
+            ? caseData.persons
+            : [];
+
+    const caseLocations =
+        Array.isArray(caseData.locationIds)
+            ? caseData.locationIds
+            : [];
+
+    const casePhones =
+        Array.isArray(caseData.phoneIds)
+            ? caseData.phoneIds
+            : [];
+
+    const caseVehicles =
+        Array.isArray(caseData.vehicleIds)
+            ? caseData.vehicleIds
+            : [];
+
+    return `
+        <article class="case-record">
+
+            <div class="case-record-header">
+
+                <div>
+                    <a class="entity-id" href="/entity/CASE/${encodeURIComponent(caseData.caseId)}">${escapeHtml(caseData.caseId)}</a>
+
+                    <h3>
+                        ${escapeHtml(caseData.title)}
+                    </h3>
+                </div>
+
+                <span class="status-badge">
+                    ${escapeHtml(caseData.status || 'UNKNOWN')}
+                </span>
+
+            </div>
+
+            ${
+                caseData.description
+                    ? `<p>${escapeHtml(caseData.description)}</p>`
+                    : ''
+            }
+
+            <div class="case-meta">
+
+                <span>
+                    Type:
+                    <strong>
+                        ${escapeHtml(caseData.caseType || 'OTHER')}
+                    </strong>
+                </span>
+
+                <span>
+                    Opened:
+                    <strong>
+                        ${escapeHtml(caseData.openedDate || '—')}
+                    </strong>
+                </span>
+
+            </div>
+
+            <div class="connection-summary">
+
+                <span>Persons: ${casePersons.length}</span>
+                <span>Locations: ${caseLocations.length}</span>
+                <span>Phones: ${casePhones.length}</span>
+                <span>Vehicles: ${caseVehicles.length}</span>
+
+            </div>
+
+            ${
+                casePersons.length
+                    ? `
+                        <div class="person-list">
+
+                            <strong>Persons Involved</strong>
+
+                            ${casePersons.map(person => `
+                                <div class="person-chip">
+
+                                    <span>
+                                        ${escapeHtml(person.id)}
+                                    </span>
+
+                                    ${
+                                        person.name
+                                            ? `
+                                                <span>
+                                                    ${escapeHtml(person.name)}
+                                                </span>
+                                            `
+                                            : ''
+                                    }
+
+                                    <span>
+                                        ${escapeHtml(
+                                            person.role || 'UNKNOWN'
+                                        )}
+                                    </span>
+
+                                </div>
+                            `).join('')}
+
+                        </div>
+                    `
+                    : ''
+            }
+
+        </article>
+    `;
+}
+
+form.addEventListener('submit', async event => {
+
+    event.preventDefault();
+
+    messageElement.textContent = 'Saving...';
+    messageElement.className = 'message';
+
+    try {
+
+        let data;
+
+        if (type === 'CASE') {
+
+            const casePersons = [];
+
+            document
+                .querySelectorAll('#personsContainer .person-row')
+                .forEach(row => {
+
+                    const id =
+                        row.querySelector('.person-id')
+                            .value
+                            .trim();
+
+                    const role =
+                        row.querySelector('.person-role')
+                            .value
+                            .trim();
+
+                    if (id) {
+                        casePersons.push({
+                            id,
+                            role
+                        });
+                    }
+                });
+
+            const locationIds = [];
+
+            document
+                .querySelectorAll('#locationsContainer .location-id')
+                .forEach(select => {
+
+                    const id = select.value.trim();
+
+                    if (id) {
+                        locationIds.push(id);
+                    }
+                });
+
+            const phoneIds = [];
+
+            document
+                .querySelectorAll('#phonesContainer .phone-id')
+                .forEach(select => {
+
+                    const id = select.value.trim();
+
+                    if (id) {
+                        phoneIds.push(id);
+                    }
+                });
+
+            const vehicleIds = [];
+
+            document
+                .querySelectorAll('#vehiclesContainer .vehicle-id')
+                .forEach(select => {
+
+                    const id = select.value.trim();
+
+                    if (id) {
+                        vehicleIds.push(id);
+                    }
+                });
+
+            const formData = new FormData(form);
+
+            data = {
+                title: String(formData.get('title') || '').trim(),
+
+                description:
+                    String(formData.get('description') || '').trim(),
+
+                caseType:
+                    String(formData.get('caseType') || '').trim(),
+
+                status:
+                    String(formData.get('status') || '').trim(),
+
+                openedDate:
+                    String(formData.get('openedDate') || '').trim(),
+
+                persons: casePersons,
+
+                locationIds,
+
+                phoneIds,
+
+                vehicleIds
+            };
+
+        } else {
+
+            data = Object.fromEntries(
+                new FormData(form).entries()
+            );
+
+            if (['VEHICLE', 'PHONE', 'ADDRESS'].includes(type)) {
+                data.suspectIds = Array.from(
+                    document.querySelectorAll(
+                        '#suspectsContainer .suspect-id'
+                    )
+                )
+                    .map(select => select.value.trim())
+                    .filter(Boolean);
+            }
+
+        }
+
+        const response = await fetch(
+            '/api/entities/' + type,
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify(data)
+            }
+        );
+
+        const json = await response.json();
+
+        if (!response.ok || !json.success) {
+            throw new Error(
+                json.message || 'Unable to save record.'
+            );
+        }
+
+        messageElement.textContent =
+            json.message || 'Saved successfully.';
+
+        messageElement.className =
+            'message success';
+
+        form.reset();
+
+        if (type === 'CASE') {
+
+            document.getElementById('personsContainer')
+                .innerHTML = '';
+
+            document.getElementById('locationsContainer')
+                .innerHTML = '';
+
+            document.getElementById('phonesContainer')
+                .innerHTML = '';
+
+            document.getElementById('vehiclesContainer')
+                .innerHTML = '';
+        }
+
+        await loadRecords();
+
+    } catch (error) {
+
+        console.error(error);
+
+        messageElement.textContent =
+            error.message || 'Something went wrong.';
+
+        messageElement.className =
+            'message error';
+    }
+});
+
+loadRecords();
+
+</script>
+
+</body>
+</html>

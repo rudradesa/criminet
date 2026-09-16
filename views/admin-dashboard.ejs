@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Admin Dashboard | Criminet
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #020617;
+            color: #f8fafc;
+        }
+
+
+        header {
+
+            height: 70px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 30px;
+
+            border-bottom:
+                1px solid #1e293b;
+
+            background: #0f172a;
+        }
+
+
+        .brand {
+
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+
+        .admin-area {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+
+            color: #94a3b8;
+        }
+
+
+        .logout {
+
+            padding: 9px 15px;
+
+            border:
+                1px solid #475569;
+
+            border-radius: 8px;
+
+            background: transparent;
+
+            color: white;
+
+            cursor: pointer;
+        }
+
+
+        .logout:hover {
+
+            background: #1e293b;
+        }
+
+
+        main {
+
+            max-width: 1250px;
+
+            margin: auto;
+
+            padding: 35px 25px;
+        }
+
+
+        h1 {
+
+            margin: 0 0 8px;
+
+            font-size: 30px;
+        }
+
+
+        .subtitle {
+
+            color: #94a3b8;
+
+            margin-bottom: 30px;
+        }
+
+
+        .grid {
+
+            display: grid;
+
+            grid-template-columns:
+                350px 1fr;
+
+            gap: 25px;
+
+            align-items: start;
+        }
+
+
+        .card {
+
+            padding: 24px;
+
+            border:
+                1px solid #1e293b;
+
+            border-radius: 14px;
+
+            background: #0f172a;
+        }
+
+
+        .card h2 {
+
+            margin-top: 0;
+
+            font-size: 20px;
+        }
+
+
+        label {
+
+            display: block;
+
+            margin-top: 15px;
+            margin-bottom: 7px;
+
+            color: #cbd5e1;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        input,
+        select {
+
+            width: 100%;
+
+            padding: 11px 12px;
+
+            border:
+                1px solid #334155;
+
+            border-radius: 8px;
+
+            background: #020617;
+
+            color: white;
+
+            outline: none;
+        }
+
+
+        input:focus,
+        select:focus {
+
+            border-color: #64748b;
+        }
+
+
+        .create-btn {
+
+            width: 100%;
+
+            margin-top: 22px;
+
+            padding: 12px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: white;
+
+            color: #020617;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        .create-btn:hover {
+
+            background: #e2e8f0;
+        }
+
+
+        .table-wrapper {
+
+            overflow-x: auto;
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 750px;
+        }
+
+
+        th {
+
+            padding: 13px;
+
+            text-align: left;
+
+            color: #94a3b8;
+
+            font-size: 12px;
+
+            text-transform: uppercase;
+
+            border-bottom:
+                1px solid #334155;
+        }
+
+
+        td {
+
+            padding: 14px 13px;
+
+            border-bottom:
+                1px solid #1e293b;
+
+            font-size: 14px;
+        }
+
+
+        .username {
+
+            font-weight: 700;
+        }
+
+
+        .role {
+
+            color: #cbd5e1;
+        }
+
+
+        .status {
+
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+
+        .active {
+
+            background: #064e3b;
+
+            color: #a7f3d0;
+        }
+
+
+        .blocked {
+
+            background: #450a0a;
+
+            color: #fecaca;
+        }
+
+
+        .actions {
+
+            display: flex;
+
+            gap: 7px;
+        }
+
+
+        .action {
+
+            padding: 7px 10px;
+
+            border-radius: 6px;
+
+            border:
+                1px solid #334155;
+
+            background: transparent;
+
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 12px;
+        }
+
+
+        .action:hover {
+
+            background: #1e293b;
+        }
+
+
+        .delete {
+
+            border-color: #7f1d1d;
+
+            color: #fecaca;
+        }
+
+
+        .empty {
+
+            padding: 30px;
+
+            text-align: center;
+
+            color: #64748b;
+        }
+
+
+        @media(max-width: 900px) {
+
+            .grid {
+
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="brand">
+        Criminet
+    </div>
+
+
+    <div class="admin-area">
+
+        <span>
+            Admin:
+            <strong>
+                <%= username %>
+            </strong>
+        </span>
+
+
+        <form
+            method="POST"
+            action="/admin/logout"
+        >
+
+            <button
+                class="logout"
+                type="submit"
+            >
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+</header>
+
+
+<main>
+
+    <h1>
+        Admin Dashboard
+    </h1>
+
+
+    <p class="subtitle">
+        Manage system users and access permissions.
+    </p>
+
+
+    <div class="grid">
+
+
+        <!-- CREATE USER -->
+
+        <div class="card">
+
+            <h2>
+                Create New User
+            </h2>
+
+
+            <form
+                method="POST"
+                action="/admin/users/create"
+            >
+
+
+                <label>
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="e.g. officer01"
+                    required
+                >
+
+
+                <label>
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    name="fullName"
+                    placeholder="e.g. Rahul Sharma"
+                    required
+                >
+
+
+                <label>
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="officer@example.com"
+                >
+
+
+                <label>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Minimum 8 characters"
+                    minlength="8"
+                    required
+                >
+
+
+                <label>
+                    Role
+                </label>
+
+                <select name="role">
+
+                    <option value="INVESTIGATOR">
+                        INVESTIGATOR
+                    </option>
+
+                    <option value="ADMIN">
+                        ADMIN
+                    </option>
+
+                </select>
+
+
+                <button
+                    class="create-btn"
+                    type="submit"
+                >
+                    Create User
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- USERS -->
+
+        <div class="card">
+
+            <h2>
+                System Users
+            </h2>
+
+
+            <div class="table-wrapper">
+
+                <% if (!users || users.length === 0) { %>
+
+                    <div class="empty">
+                        No users have been created yet.
+                    </div>
+
+                <% } else { %>
+
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    User
+                                </th>
+
+                                <th>
+                                    Role
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Created
+                                </th>
+
+                                <th>
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <% users.forEach(user => { %>
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="username">
+                                            <%= user.username %>
+                                        </div>
+
+                                        <div style="
+                                            color:#64748b;
+                                            font-size:12px;
+                                            margin-top:4px;
+                                        ">
+                                            <%= user.fullName %>
+                                        </div>
+
+                                    </td>
+
+
+                                    <td class="role">
+                                        <%= user.role %>
+                                    </td>
+
+
+                                    <td>
+
+                                        <span
+                                            class="status
+                                            <%= user.status === 'ACTIVE'
+                                                ? 'active'
+                                                : 'blocked'
+                                            %>"
+                                        >
+                                            <%= user.status %>
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <%= user.createdAt
+                                            ? user.createdAt.substring(0, 10)
+                                            : '-'
+                                        %>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="actions">
+
+
+                                            <% if (user.status === 'ACTIVE') { %>
+
+                                                <form
+                                                    method="POST"
+                                                    action="/admin/users/<%= user.userId %>/block"
+                                                >
+
+                                                    <button
+                                                        class="action"
+                                                        type="submit"
+                                                    >
+                                                        Block
+                                                    </button>
+
+                                                </form>
+
+                                            <% } else { %>
+
+                                                <form
+                                                    method="POST"
+                                                    action="/admin/users/<%= user.userId %>/unblock"
+                                                >
+
+                                                    <button
+                                                        class="action"
+                                                        type="submit"
+                                                    >
+                                                        Unblock
+                                                    </button>
+
+                                                </form>
+
+                                            <% } %>
+
+
+                                            <form
+                                                method="POST"
+                                                action="/admin/users/<%= user.userId %>/delete"
+                                                onsubmit="
+                                                    return confirm(
+                                                        'Delete this user permanently?'
+                                                    );
+                                                "
+                                            >
+
+                                                <button
+                                                    class="action delete"
+                                                    type="submit"
+                                                >
+                                                    Delete
+                                                </button>
+
+                                            </form>
+
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }); %>
+
+                        </tbody>
+
+                    </table>
+
+
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

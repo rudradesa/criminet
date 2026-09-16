@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criminet</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0d1b2a;
+            --navy-2: #13283b;
+            --navy-3: #19364d;
+
+            --blue: #2d6388;
+            --blue-light: #4e86aa;
+
+            --orange: #d28a3c;
+            --orange-light: #e5a45c;
+
+            --white: #f4f5f6;
+            --text: #d6dce1;
+            --muted: #91a0ac;
+
+            --border: #2c4355;
+            --green: #58a77c;
+            --red: #c96262;
+
+            --sidebar-width: 250px;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #0b151f;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--navy);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .department {
+            padding: 24px 22px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .department-small {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .department-name {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.3;
+        }
+
+        .department-sub {
+            font-size: 12px;
+            color: var(--blue-light);
+            margin-top: 5px;
+        }
+
+        .nav {
+            padding: 18px 12px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            font-size: 10px;
+            letter-spacing: 1.8px;
+            color: #687987;
+            padding: 10px 12px 7px;
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 13px;
+            margin: 2px 0;
+            border-radius: 3px;
+            color: #b8c3cb;
+            font-size: 14px;
+            transition: 0.15s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--navy-2);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--blue);
+            color: white;
+            border-left: 3px solid var(--orange-light);
+            padding-left: 10px;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .sidebar-bottom {
+            padding: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .user-box {
+            background: #102333;
+            border: 1px solid var(--border);
+            padding: 12px;
+        }
+
+        .user-name {
+            color: var(--white);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        /* TOP BAR */
+
+        .topbar {
+            height: 68px;
+            background: #101f2c;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .top-title {
+            color: var(--white);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .top-subtitle {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: #9db4a6;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+        }
+
+        .content {
+            padding: 30px;
+            max-width: 1500px;
+        }
+
+        /* =========================
+           WELCOME
+        ========================= */
+
+        .welcome {
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(20, 52, 74, 0.98),
+                    rgba(18, 43, 61, 0.95)
+                );
+
+            border: 1px solid var(--border);
+            min-height: 150px;
+            padding: 28px 32px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .welcome::after {
+            content: "INTELLIGENCE";
+            position: absolute;
+            right: 25px;
+            bottom: -15px;
+            font-size: 80px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.025);
+            letter-spacing: 4px;
+        }
+
+        .welcome-label {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--orange-light);
+            text-transform: uppercase;
+            margin-bottom: 9px;
+        }
+
+        .welcome h1 {
+            font-size: 30px;
+            color: white;
+            margin-bottom: 7px;
+        }
+
+        .welcome p {
+            color: #aebbc4;
+            font-size: 14px;
+        }
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        .section-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .search-panel {
+            background: #111f2b;
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            height: 46px;
+            background: #0c1822;
+            border: 1px solid #344b5d;
+            color: white;
+            padding: 0 15px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--blue-light);
+        }
+
+        .search-input::placeholder {
+            color: #71818d;
+        }
+
+        .search-button {
+            width: 125px;
+            border: none;
+            background: var(--blue);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background: var(--blue-light);
+        }
+
+        /* =========================
+           QUICK ACTIONS
+        ========================= */
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .action {
+            background: #152737;
+            border: 1px solid var(--border);
+            min-height: 88px;
+            padding: 17px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: 0.15s;
+        }
+
+        .action:hover {
+            border-color: var(--blue-light);
+            background: #1a3042;
+            transform: translateY(-1px);
+        }
+
+        .action-icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1d4059;
+            border: 1px solid #315d78;
+            font-size: 18px;
+        }
+
+        .action-text strong {
+            display: block;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .action-text span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* =========================
+           MAIN GRID
+        ========================= */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.55fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: #111f2b;
+            border: 1px solid var(--border);
+        }
+
+        .panel-header {
+            height: 52px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+        }
+
+        .panel-title {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .panel-link {
+            color: var(--orange-light);
+            font-size: 11px;
+        }
+
+        /* =========================
+           RECORDS
+        ========================= */
+
+        .records {
+            padding: 5px 0;
+        }
+
+        .record {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 18px;
+            border-bottom: 1px solid #203442;
+            min-height: 66px;
+        }
+
+        .record:last-child {
+            border-bottom: none;
+        }
+
+        .record:hover {
+            background: #142633;
+        }
+
+        .record-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .record-icon {
+            width: 34px;
+            height: 34px;
+            background: #1b3447;
+            border: 1px solid #31566d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .record-name {
+            color: white;
+            font-size: 14px;
+        }
+
+        .record-desc {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .record-count {
+            min-width: 45px;
+            text-align: right;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .record-manage {
+            color: var(--orange-light);
+            font-size: 11px;
+            margin-left: 18px;
+        }
+
+        /* =========================
+           INVESTIGATION TOOLS
+        ========================= */
+
+        .tools {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .tool {
+            min-height: 90px;
+            border: 1px solid #30495a;
+            background: #142735;
+            padding: 15px;
+            transition: 0.15s;
+        }
+
+        .tool:hover {
+            border-color: var(--orange);
+            background: #182e3e;
+        }
+
+        .tool-icon {
+            font-size: 20px;
+            margin-bottom: 9px;
+        }
+
+        .tool-title {
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .tool-desc {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .system-status {
+            margin-top: 20px;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 18px;
+            border-bottom: 1px solid #203442;
+            font-size: 12px;
+        }
+
+        .status-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            color: #b8c3cb;
+        }
+
+        .status-value {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #a8c5b3;
+        }
+
+        .mini-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--green);
+            border-radius: 50%;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 17px;
+            border-top: 1px solid var(--border);
+            color: #61717d;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .nav {
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .nav-section {
+                display: none;
+            }
+
+            .nav-item {
+                white-space: nowrap;
+            }
+
+            .sidebar-bottom {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .content {
+                padding: 18px;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .search-row {
+                flex-direction: column;
+            }
+
+            .search-button {
+                width: 100%;
+                height: 44px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="department">
+            <div class="department-small">
+                Police Department
+            </div>
+
+            <div class="department-name">
+                Criminal Intelligence
+            </div>
+
+            <div class="department-sub">
+                Investigation System
+            </div>
+        </div>
+
+
+        <nav class="nav">
+
+            <div class="nav-section">
+                Main
+            </div>
+
+            <a href="/dashboard" class="nav-item active">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
+
+
+            <div class="nav-section">
+                Intelligence Records
+            </div>
+
+            <a href="/data-entry?type=PERSON" class="nav-item">
+                <span class="nav-icon">◉</span>
+                Persons
+            </a>
+
+            <a href="/data-entry?type=CASE" class="nav-item">
+                <span class="nav-icon">▣</span>
+                Cases
+            </a>
+
+            <a href="/data-entry?type=VEHICLE" class="nav-item">
+                <span class="nav-icon">▱</span>
+                Vehicles
+            </a>
+
+            <a href="/data-entry?type=PHONE" class="nav-item">
+                <span class="nav-icon">⌕</span>
+                Phones
+            </a>
+
+            <a href="/data-entry?type=ADDRESS" class="nav-item">
+                <span class="nav-icon">⌖</span>
+                Addresses
+            </a>
+
+            <a href="/data-entry?type=LOCATION" class="nav-item">
+                <span class="nav-icon">◎</span>
+                Locations
+            </a>
+
+
+            <div class="nav-section">
+                Investigation
+            </div>
+
+            <a href="/graph" class="nav-item">
+                <span class="nav-icon">◈</span>
+                Investigation Graph
+            </a>
+
+            
+
+
+            <% if (user && user.role === 'ADMIN') { %>
+
+                <div class="nav-section">
+                    Administration
+                </div>
+
+                <a href="/admin" class="nav-item">
+                    <span class="nav-icon">⚙</span>
+                    Administration
+                </a>
+
+            <% } %>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="user-box">
+
+                <div class="user-name">
+                    <%= user?.fullName || user?.username || 'Investigator' %>
+                </div>
+
+                <div class="user-role">
+                    <%= user?.role || 'INVESTIGATOR' %>
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+                <div class="top-title">
+                    Criminal Intelligence & Investigation System
+                </div>
+
+                <div class="top-subtitle">
+                    Police Intelligence Operations Portal
+                </div>
+            </div>
+
+
+            <div class="top-right">
+
+                <div class="status">
+                    <span class="status-dot"></span>
+                    System Operational
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+
+            <!-- =========================
+                 WELCOME
+            ========================== -->
+
+            <div class="welcome">
+
+                <div class="welcome-label">
+                    Investigator Workspace
+                </div>
+
+                <h1>
+                    Intelligence Command Center
+                </h1>
+
+                <p>
+                    Search, manage and investigate criminal intelligence records
+                    from a single operational workspace.
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 SEARCH
+            ========================== -->
+
+          
+
+            <!-- =========================
+                 QUICK ACTIONS
+            ========================== -->
+
+            <div class="section-title">
+                Quick Actions
+            </div>
+
+            <div class="quick-actions">
+
+                <a href="/data-entry?type=PERSON" class="action">
+
+                    <div class="action-icon">
+                        ◉
+                    </div>
+
+                    <div class="action-text">
+                        <strong>Add Person</strong>
+                        <span>Create a new person intelligence record</span>
+                    </div>
+
+                </a>
+
+
+                <a href="/data-entry?type=CASE" class="action">
+
+                    <div class="action-icon">
+                        ▣
+                    </div>
+
+                    <div class="action-text">
+                        <strong>Create Case</strong>
+                        <span>Register a new investigation</span>
+                    </div>
+
+                </a>
+
+
+                <a href="/data-entry?type=VEHICLE" class="action">
+
+                    <div class="action-icon">
+                        ▱
+                    </div>
+
+                    <div class="action-text">
+                        <strong>Add Vehicle</strong>
+                        <span>Record vehicle intelligence</span>
+                    </div>
+
+                </a>
+
+
+                
+            </div>
+
+
+            <!-- =========================
+                 DASHBOARD GRID
+            ========================== -->
+
+            <div class="dashboard-grid">
+
+
+                <!-- RECORDS -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div class="panel-title">
+                            Intelligence Records
+                        </div>
+
+                        <span class="panel-link">
+                            DATABASE
+                        </span>
+
+                    </div>
+
+
+                    <div class="records">
+
+
+                        <!-- PERSONS -->
+
+                        <div class="record">
+
+                            <div class="record-left">
+
+                                <div class="record-icon">
+                                    ◉
+                                </div>
+
+                                <div>
+
+                                    <div class="record-name">
+                                        Persons
+                                    </div>
+
+                                    <div class="record-desc">
+                                        Registered individuals
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div>
+                                <span class="record-count">
+                                    <%= stats?.persons ?? 0 %>
+                                </span>
+
+                                <a
+                                    href="/data-entry?type=PERSON"
+                                    class="record-manage"
+                                >
+                                    Manage
+                                </a>
+                            </div>
+
+                        </div>
+
+
+                        <!-- CASES -->
+
+                        <div class="record">
+
+                            <div class="record-left">
+
+                                <div class="record-icon">
+                                    ▣
+                                </div>
+
+                                <div>
+
+                                    <div class="record-name">
+                                        Cases
+                                    </div>
+
+                                    <div class="record-desc">
+                                        Investigation records
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div>
+                                <span class="record-count">
+                                    <%= stats?.cases ?? 0 %>
+                                </span>
+
+                                <a
+                                    href="/data-entry?type=CASE"
+                                    class="record-manage"
+                                >
+                                    Manage
+                                </a>
+                            </div>
+
+                        </div>
+
+
+                        <!-- VEHICLES -->
+
+                        <div class="record">
+
+                            <div class="record-left">
+
+                                <div class="record-icon">
+                                    ▱
+                                </div>
+
+                                <div>
+
+                                    <div class="record-name">
+                                        Vehicles
+                                    </div>
+
+                                    <div class="record-desc">
+                                        Registered vehicle intelligence
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div>
+                                <span class="record-count">
+                                    <%= stats?.vehicles ?? 0 %>
+                                </span>
+
+                                <a
+                                    href="/data-entry?type=VEHICLE"
+                                    class="record-manage"
+                                >
+                                    Manage
+                                </a>
+                            </div>
+
+                        </div>
+
+
+                        <!-- PHONES -->
+
+                        <div class="record">
+
+                            <div class="record-left">
+
+                                <div class="record-icon">
+                                    ⌕
+                                </div>
+
+                                <div>
+
+                                    <div class="record-name">
+                                        Phones
+                                    </div>
+
+                                    <div class="record-desc">
+                                        Telephone intelligence records
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div>
+                                <span class="record-count">
+                                    <%= stats?.phones ?? 0 %>
+                                </span>
+
+                                <a
+                                    href="/data-entry?type=PHONE"
+                                    class="record-manage"
+                                >
+                                    Manage
+                                </a>
+                            </div>
+
+                        </div>
+
+
+                        <!-- ADDRESSES -->
+
+                        <div class="record">
+
+                            <div class="record-left">
+
+                                <div class="record-icon">
+                                    ⌖
+                                </div>
+
+                                <div>
+
+                                    <div class="record-name">
+                                        Addresses
+                                    </div>
+
+                                    <div class="record-desc">
+                                        Registered addresses
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div>
+                                <span class="record-count">
+                                    <%= stats?.addresses ?? 0 %>
+                                </span>
+
+                                <a
+                                    href="/data-entry?type=ADDRESS"
+                                    class="record-manage"
+                                >
+                                    Manage
+                                </a>
+                            </div>
+
+                        </div>
+
+
+                        <!-- LOCATIONS -->
+
+                        <div class="record">
+
+                            <div class="record-left">
+
+                                <div class="record-icon">
+                                    ◎
+                                </div>
+
+                                <div>
+
+                                    <div class="record-name">
+                                        Locations
+                                    </div>
+
+                                    <div class="record-desc">
+                                        Intelligence locations
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div>
+                                <span class="record-count">
+                                    <%= stats?.locations ?? 0 %>
+                                </span>
+
+                                <a
+                                    href="/data-entry?type=LOCATION"
+                                    class="record-manage"
+                                >
+                                    Manage
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- INVESTIGATION -->
+
+                <div>
+
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div class="panel-title">
+                                Investigation Tools
+                            </div>
+
+                            <span class="panel-link">
+                                OPERATIONS
+                            </span>
+
+                        </div>
+
+
+                        <div class="tools">
+
+
+                            <a href="/graph" class="tool">
+
+                                <div class="tool-icon">
+                                    ◈
+                                </div>
+
+                                <div class="tool-title">
+                                    Investigation Graph
+                                </div>
+
+                                <div class="tool-desc">
+                                    Explore connections between intelligence entities.
+                                </div>
+
+                            </a>
+
+
+
+                            <a href="/data-entry?type=PERSON" class="tool">
+
+                                <div class="tool-icon">
+                                    +
+                                </div>
+
+                                <div class="tool-title">
+                                    Add Intelligence
+                                </div>
+
+                                <div class="tool-desc">
+                                    Enter new intelligence records.
+                                </div>
+
+                            </a>
+
+
+                            <a href="/data-entry?type=CASE" class="tool">
+
+                                <div class="tool-icon">
+                                    ▣
+                                </div>
+
+                                <div class="tool-title">
+                                    Case Management
+                                </div>
+
+                                <div class="tool-desc">
+                                    Create and manage investigations.
+                                </div>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SYSTEM STATUS -->
+
+                    <div class="panel system-status">
+
+                        <div class="panel-header">
+
+                            <div class="panel-title">
+                                System Status
+                            </div>
+
+                        </div>
+
+
+                        <div class="status-row">
+
+                            <span class="status-label">
+                                Intelligence Database
+                            </span>
+
+                            <span class="status-value">
+                                <span class="mini-dot"></span>
+                                Connected
+                            </span>
+
+                        </div>
+
+
+                        <div class="status-row">
+
+                            <span class="status-label">
+                                Investigation Engine
+                            </span>
+
+                            <span class="status-value">
+                                <span class="mini-dot"></span>
+                                Operational
+                            </span>
+
+                        </div>
+
+
+                        <div class="status-row">
+
+                            <span class="status-label">
+                                User Access
+                            </span>
+
+                            <span class="status-value">
+                                <span class="mini-dot"></span>
+                                Authorized
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 FOOTER
+            ========================== -->
+
+            <div class="footer">
+
+                <span>
+                    Criminal Intelligence & Investigation System
+                </span>
+
+                <span>
+                    Authorized Personnel Only
+                </span>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        function performSearch() {
+
+            const input =
+                document.getElementById("intelligenceSearch");
+
+            const query =
+                input.value.trim();
+
+            if (!query) {
+                input.focus();
+                return;
+            }
+
+            /*
+             * Search endpoint can be connected here later.
+             * For now redirect to the relationships/search workspace.
+             */
+
+            window.location.href =
+                "/relationships?search=" +
+                encodeURIComponent(query);
+        }
+
+
+        document
+            .getElementById("intelligenceSearch")
+            .addEventListener("keydown", function(event) {
+
+                if (event.key === "Enter") {
+                    performSearch();
+                }
+
+            });
+
+    </script>
+
+</body>
+</html>

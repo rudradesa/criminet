@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entity Details | Intelligence System</title>
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    :root {
+      --bg: #171717;
+      --sidebar: #111111;
+      --panel: #202020;
+      --panel-light: #262626;
+      --border: #373737;
+      --border-light: #454545;
+
+      --white: #f4f1eb;
+      --text: #ddd8cf;
+      --muted: #a59f95;
+      --dim: #777169;
+
+      --accent: #d88935;
+      --accent-light: #efa65a;
+
+      --green: #55b88a;
+      --red: #d96b68;
+
+      --shadow: 0 8px 24px rgba(0,0,0,.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px),
+        var(--bg);
+      background-size: 32px 32px;
+      color: var(--text);
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      font-size: 15px;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 30px 0 60px;
+    }
+
+    .narrow {
+      max-width: 1180px;
+    }
+
+    /* --------------------------------
+       TOP NAV / BACK
+    -------------------------------- */
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      margin-bottom: 28px;
+      padding: 8px 12px;
+
+      color: var(--muted);
+      text-decoration: none;
+
+      border: 1px solid var(--border);
+      background: #1b1b1b;
+
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .02em;
+
+      transition: .15s ease;
+    }
+
+    .back:hover {
+      color: var(--white);
+      border-color: var(--accent);
+      background: #222;
+    }
+
+    /* --------------------------------
+       PAGE HEADER
+    -------------------------------- */
+
+    .page-header {
+      border-left: 3px solid var(--accent);
+      padding: 4px 0 6px 18px;
+      margin-bottom: 26px;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+
+      color: var(--accent-light);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .page-header h1 {
+      margin: 0;
+
+      color: var(--white);
+      font-size: 32px;
+      font-weight: 650;
+      letter-spacing: -.025em;
+    }
+
+    .muted {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* --------------------------------
+       PANELS
+    -------------------------------- */
+
+    .panel {
+      margin-top: 18px;
+      padding: 22px;
+
+      background: var(--panel);
+      border: 1px solid var(--border);
+
+      border-radius: 2px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel > h2 {
+      margin: 0 0 18px;
+
+      color: var(--white);
+      font-size: 17px;
+      font-weight: 650;
+
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* --------------------------------
+       ENTITY HEADER
+    -------------------------------- */
+
+    .entity-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+
+      border-bottom: 1px solid var(--border);
+    }
+
+    .entity-heading h2 {
+      margin: 0;
+
+      color: var(--white);
+      font-size: 23px;
+      font-weight: 650;
+    }
+
+    .entity-id {
+      display: inline-block;
+
+      margin: 8px 0 0;
+      padding: 5px 9px;
+
+      color: var(--muted);
+      background: #171717;
+      border: 1px solid var(--border);
+
+      font-family: "Consolas", "Courier New", monospace;
+      font-size: 12px;
+      letter-spacing: .02em;
+    }
+
+    .entity-type {
+      flex-shrink: 0;
+
+      padding: 6px 10px;
+
+      color: var(--accent-light);
+      background: rgba(216,137,53,.08);
+      border: 1px solid rgba(216,137,53,.35);
+
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    /* --------------------------------
+       DETAIL GRID
+    -------------------------------- */
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .detail-grid > div {
+      display: grid;
+      grid-template-columns: 155px minmax(0, 1fr);
+      align-items: center;
+
+      min-height: 52px;
+      padding: 10px 13px;
+
+      background: #1c1c1c;
+    }
+
+    .detail-grid > div:nth-child(even) {
+      background: #1f1f1f;
+    }
+
+    .detail-grid strong {
+      color: var(--muted);
+
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    .detail-grid span {
+      color: var(--text);
+
+      font-size: 14px;
+      line-height: 1.45;
+
+      overflow-wrap: anywhere;
+    }
+
+    /* --------------------------------
+       CONNECTIONS
+    -------------------------------- */
+
+    #connections {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .relationship-card {
+      position: relative;
+
+      padding: 15px 17px;
+
+      background: #1b1b1b;
+      border: 1px solid var(--border);
+
+      border-left: 3px solid #53606a;
+
+      transition:
+        border-color .15s ease,
+        background .15s ease,
+        transform .15s ease;
+    }
+
+    .relationship-card:hover {
+      background: #222;
+      border-color: var(--border-light);
+      border-left-color: var(--accent);
+      transform: translateX(2px);
+    }
+
+    .connection {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .connection strong {
+      color: var(--white);
+      font-weight: 650;
+    }
+
+    .connection span {
+      color: var(--accent-light);
+
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .relationship-card p {
+      margin: 9px 0 8px;
+
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .relationship-card small {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+
+      color: var(--dim);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .relationship-card small::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+
+      background: var(--green);
+      border-radius: 50%;
+    }
+
+    /* --------------------------------
+       LOADING / EMPTY / ERROR STATES
+    -------------------------------- */
+
+    .loading {
+      color: var(--muted);
+      font-family: "Consolas", "Courier New", monospace;
+      font-size: 13px;
+    }
+
+    .empty-state {
+      padding: 25px;
+
+      text-align: center;
+
+      color: var(--muted);
+      background: #1b1b1b;
+      border: 1px dashed var(--border);
+
+      font-size: 13px;
+    }
+
+    .error-state {
+      padding: 16px;
+
+      color: #f0aaa7;
+      background: rgba(217,107,104,.07);
+      border: 1px solid rgba(217,107,104,.35);
+
+      font-family: "Consolas", "Courier New", monospace;
+      font-size: 13px;
+    }
+
+    /* --------------------------------
+       RESPONSIVE
+    -------------------------------- */
+
+    @media (max-width: 800px) {
+      .wrap {
+        width: min(100% - 28px, 1180px);
+        padding-top: 20px;
+      }
+
+      .page-header h1 {
+        font-size: 27px;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .panel {
+        padding: 15px;
+      }
+
+      .entity-heading {
+        flex-direction: column;
+      }
+
+      .detail-grid > div {
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
+
+      .connection {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<main class="wrap narrow">
+
+  <a href="/dashboard" class="back">
+    ← Back to Dashboard
+  </a>
+
+  <header class="page-header">
+    <p class="eyebrow"><%= type %> RECORD</p>
+
+    <h1>Entity Details</h1>
+
+    <p class="muted">
+      Raw intelligence record and automatically discovered associations.
+    </p>
+  </header>
+
+  <!-- ENTITY INFORMATION -->
+  <section class="panel" id="entity">
+    <div class="loading">
+      Loading intelligence record...
+    </div>
+  </section>
+
+  <!-- CONNECTIONS -->
+  <section class="panel">
+
+    <h2>Discovered Connections</h2>
+
+    <div id="connections">
+      <div class="loading">
+        Analyzing entity associations...
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+const type = '<%= type %>';
+const id = '<%= id %>';
+
+function esc(v) {
+  return String(v ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function entityTitle(e) {
+
+  if (type === 'PERSON') {
+    return `${e.firstName || ''} ${e.lastName || ''}`.trim() || id;
+  }
+
+  if (type === 'CASE') {
+    return e.title || id;
+  }
+
+  if (type === 'VEHICLE') {
+    return e.registrationNumber || id;
+  }
+
+  if (type === 'PHONE') {
+    return e.phoneNumber || id;
+  }
+
+  if (type === 'ADDRESS') {
+    return `${e.addressLine || ''}${e.city ? ', ' + e.city : ''}` || id;
+  }
+
+  return e.name || id;
+}
+
+
+(async () => {
+
+  try {
+
+    const r = await fetch(
+      `/api/entities/${encodeURIComponent(type)}/${encodeURIComponent(id)}/detail`
+    );
+
+    const j = await r.json();
+
+    if (!r.ok || !j.success) {
+      throw new Error(j.message || 'Unable to load entity');
+    }
+
+    const e = j.data.entity;
+
+    /* ENTITY */
+
+    document.getElementById('entity').innerHTML = `
+
+      <div class="entity-heading">
+
+        <div>
+          <h2>${esc(entityTitle(e))}</h2>
+
+          <p class="entity-id">
+            ${esc(id)}
+          </p>
+        </div>
+
+        <span class="entity-type">
+          ${esc(type)}
+        </span>
+
+      </div>
+
+      <div class="detail-grid">
+
+        ${Object.entries(e)
+          .map(([k, v]) => `
+
+            <div>
+
+              <strong>
+                ${esc(k)}
+              </strong>
+
+              <span>
+                ${esc(
+                  Array.isArray(v)
+                    ? v.join(', ')
+                    : v
+                )}
+              </span>
+
+            </div>
+
+          `)
+          .join('')}
+
+      </div>
+    `;
+
+
+    /* CONNECTIONS */
+
+    const c = j.data.connections || [];
+
+    document.getElementById('connections').innerHTML =
+
+      c.length
+
+        ? c.map(x => `
+
+            <article class="relationship-card">
+
+              <div class="connection">
+
+                <strong>
+                  ${esc(x.source.name)}
+                </strong>
+
+                <span>
+                  — ${esc(
+                    x.type.replaceAll('_', ' ')
+                  )} →
+                </span>
+
+                <strong>
+                  ${esc(x.target.name)}
+                </strong>
+
+              </div>
+
+              <p>
+                ${esc(x.reason)}
+              </p>
+
+              <small>
+                Strength: ${esc(x.strength)}
+              </small>
+
+            </article>
+
+          `).join('')
+
+        : `
+
+          <div class="empty-state">
+            No automatically discovered connections
+            were found for this entity.
+          </div>
+
+        `;
+
+
+  } catch (e) {
+
+    document.getElementById('entity').innerHTML = `
+      <div class="error-state">
+        ${esc(e.message)}
+      </div>
+    `;
+
+    document.getElementById('connections').innerHTML = '';
+
+  }
+
+})();
+</script>
+
+</body>
+</html>

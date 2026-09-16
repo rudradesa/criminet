@@ -1,0 +1,2659 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Criminet
+    </title>
+
+    <style>
+
+        /* =====================================================
+           DESIGN SYSTEM
+        ===================================================== */
+
+        :root {
+
+            --navy-950: #070D18;
+            --navy-900: #0B1220;
+            --navy-850: #101A2B;
+            --navy-800: #142033;
+
+            --cyan: #00B8D9;
+            --cyan-light: #33D6F2;
+            --cyan-dark: #008EAA;
+
+            --amber: #F59E0B;
+            --amber-light: #FBBF24;
+
+            --white: #F8FAFC;
+            --text: #CBD5E1;
+            --muted: #8290A5;
+            --dim: #536176;
+
+            --border: rgba(148, 163, 184, 0.14);
+            --border-cyan: rgba(0, 184, 217, 0.30);
+
+            --panel: rgba(15, 27, 45, 0.72);
+
+            --radius: 14px;
+        }
+
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background:
+                var(--navy-950);
+
+            color:
+                var(--white);
+
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+        }
+
+
+        /* =====================================================
+           BACKGROUND
+        ===================================================== */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            background-image:
+                linear-gradient(
+                    rgba(255,255,255,.018) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,.018) 1px,
+                    transparent 1px
+                );
+
+            background-size: 42px 42px;
+
+            mask-image:
+                linear-gradient(
+                    to bottom,
+                    black,
+                    transparent 80%
+                );
+
+            z-index: -2;
+        }
+
+
+        .ambient {
+
+            position: fixed;
+
+            width: 600px;
+            height: 600px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(0, 184, 217, .08);
+
+            filter:
+                blur(130px);
+
+            top: -300px;
+            left: 50%;
+
+            transform:
+                translateX(-50%);
+
+            pointer-events: none;
+
+            z-index: -1;
+        }
+
+
+        /* =====================================================
+           NAVIGATION
+        ===================================================== */
+
+        nav {
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+
+            height: 72px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding:
+                0 clamp(20px, 5vw, 72px);
+
+            border-bottom:
+                1px solid var(--border);
+
+            background:
+                rgba(7, 13, 24, .82);
+
+            backdrop-filter:
+                blur(18px);
+        }
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            text-decoration: none;
+        }
+
+
+        .logo {
+
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border:
+                1px solid var(--border-cyan);
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(0,184,217,.18),
+                    rgba(0,184,217,.04)
+                );
+
+            color:
+                var(--cyan-light);
+
+            font-size: 12px;
+
+            font-weight: 900;
+
+            letter-spacing: .5px;
+
+            box-shadow:
+                0 0 25px rgba(0,184,217,.08);
+        }
+
+
+        .brand-text {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 1px;
+        }
+
+
+        .brand-title {
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            letter-spacing: .2px;
+        }
+
+
+        .brand-subtitle {
+
+            color: var(--dim);
+
+            font-size: 10px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1.4px;
+        }
+
+
+        .nav-links {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+
+        .nav-link {
+
+            padding:
+                9px 14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 8px;
+
+            color:
+                var(--text);
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            transition:
+                .2s ease;
+        }
+
+
+        .nav-link:hover {
+
+            border-color:
+                var(--border-cyan);
+
+            background:
+                rgba(0,184,217,.07);
+
+            color:
+                var(--white);
+        }
+
+
+        .login-button {
+
+            border-color:
+                var(--cyan-dark);
+
+            background:
+                var(--cyan);
+
+            color:
+                #03131A;
+
+            font-weight: 800;
+        }
+
+
+        .login-button:hover {
+
+            background:
+                var(--cyan-light);
+
+            color:
+                #03131A;
+
+            border-color:
+                var(--cyan-light);
+
+            box-shadow:
+                0 0 25px rgba(0,184,217,.18);
+        }
+
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
+        .hero {
+
+            position: relative;
+
+            min-height:
+                calc(100vh - 72px);
+
+            display: flex;
+
+            align-items: center;
+
+            padding:
+                90px clamp(20px, 6vw, 90px)
+                80px;
+
+            overflow: hidden;
+        }
+
+
+        .hero::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 420px;
+            height: 420px;
+
+            right: -150px;
+            top: 25%;
+
+            border:
+                1px solid rgba(0,184,217,.08);
+
+            border-radius: 50%;
+
+            box-shadow:
+                0 0 0 50px rgba(0,184,217,.015),
+                0 0 0 100px rgba(0,184,217,.01);
+
+            pointer-events: none;
+        }
+
+
+        .hero-grid {
+
+            width: 100%;
+
+            max-width: 1250px;
+
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.15fr)
+                minmax(360px, .85fr);
+
+            gap: 70px;
+
+            align-items: center;
+        }
+
+
+        .hero-content {
+
+            max-width: 760px;
+        }
+
+
+        .status-line {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            padding:
+                7px 11px;
+
+            margin-bottom: 24px;
+
+            border:
+                1px solid var(--border-cyan);
+
+            border-radius: 999px;
+
+            background:
+                rgba(0,184,217,.055);
+
+            color:
+                #8EEBFA;
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            letter-spacing: 1.1px;
+        }
+
+
+        .status-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background:
+                var(--cyan);
+
+            box-shadow:
+                0 0 12px var(--cyan);
+        }
+
+
+        h1 {
+
+            margin: 0;
+
+            max-width: 850px;
+
+            font-size:
+                clamp(44px, 6vw, 76px);
+
+            line-height:
+                1.01;
+
+            letter-spacing:
+                -3px;
+        }
+
+
+        h1 .accent {
+
+            color:
+                var(--cyan);
+        }
+
+
+        h1 .soft {
+
+            display: block;
+
+            color:
+                #94A3B8;
+        }
+
+
+        .hero-description {
+
+            max-width: 680px;
+
+            margin:
+                27px 0 32px;
+
+            color:
+                var(--muted);
+
+            font-size:
+                clamp(15px, 2vw, 18px);
+
+            line-height:
+                1.75;
+        }
+
+
+        .hero-actions {
+
+            display: flex;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .primary {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 9px;
+
+            padding:
+                13px 20px;
+
+            border-radius: 9px;
+
+            background:
+                var(--cyan);
+
+            color:
+                #03131A;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            transition:
+                .2s ease;
+        }
+
+
+        .primary:hover {
+
+            background:
+                var(--cyan-light);
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 12px 35px rgba(0,184,217,.18);
+        }
+
+
+        .secondary {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding:
+                13px 20px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 9px;
+
+            color:
+                var(--text);
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            transition:
+                .2s ease;
+        }
+
+
+        .secondary:hover {
+
+            border-color:
+                var(--border-cyan);
+
+            background:
+                rgba(0,184,217,.05);
+
+            color:
+                var(--white);
+        }
+
+
+        /* =====================================================
+           HERO INTELLIGENCE PANEL
+        ===================================================== */
+
+        .intel-panel {
+
+            position: relative;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                18px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(20,32,51,.86),
+                    rgba(8,16,29,.88)
+                );
+
+            box-shadow:
+                0 25px 80px rgba(0,0,0,.28);
+
+            overflow: hidden;
+        }
+
+
+        .intel-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding:
+                16px 18px;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+
+        .intel-title {
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+
+            color:
+                var(--text);
+        }
+
+
+        .secure {
+
+            font-size: 9px;
+
+            color:
+                var(--cyan);
+
+            letter-spacing: 1px;
+        }
+
+
+        .intel-body {
+
+            padding: 20px;
+        }
+
+
+        .mini-map {
+
+            position: relative;
+
+            height: 210px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 12px;
+
+            background:
+                #09111E;
+
+            overflow: hidden;
+        }
+
+
+        .mini-map::before {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background-image:
+                linear-gradient(
+                    rgba(0,184,217,.055) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(0,184,217,.055) 1px,
+                    transparent 1px
+                );
+
+            background-size: 32px 32px;
+        }
+
+
+        .map-ring {
+
+            position: absolute;
+
+            width: 150px;
+            height: 150px;
+
+            border:
+                1px solid rgba(0,184,217,.16);
+
+            border-radius: 50%;
+
+            left: 50%;
+            top: 50%;
+
+            transform:
+                translate(-50%, -50%);
+        }
+
+
+        .map-ring::before {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 25px;
+
+            border:
+                1px solid rgba(0,184,217,.12);
+
+            border-radius: 50%;
+        }
+
+
+        .map-line {
+
+            position: absolute;
+
+            height: 1px;
+
+            background:
+                rgba(0,184,217,.35);
+
+            transform-origin: left center;
+        }
+
+
+        .line-one {
+
+            width: 120px;
+
+            left: 24%;
+
+            top: 42%;
+
+            transform:
+                rotate(25deg);
+        }
+
+
+        .line-two {
+
+            width: 105px;
+
+            left: 48%;
+
+            top: 52%;
+
+            transform:
+                rotate(-35deg);
+        }
+
+
+        .map-node {
+
+            position: absolute;
+
+            width: 9px;
+            height: 9px;
+
+            border-radius: 50%;
+
+            background:
+                var(--cyan);
+
+            box-shadow:
+                0 0 16px rgba(0,184,217,.65);
+        }
+
+
+        .node-a {
+            left: 25%;
+            top: 38%;
+        }
+
+
+        .node-b {
+            left: 49%;
+            top: 51%;
+        }
+
+
+        .node-c {
+            left: 69%;
+            top: 31%;
+        }
+
+
+        .node-d {
+
+            left: 74%;
+            top: 67%;
+
+            background:
+                var(--amber);
+
+            box-shadow:
+                0 0 16px rgba(245,158,11,.55);
+        }
+
+
+        .map-label {
+
+            position: absolute;
+
+            right: 12px;
+            bottom: 10px;
+
+            color:
+                var(--dim);
+
+            font-size: 9px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+        }
+
+
+        /* =====================================================
+           STATS
+        ===================================================== */
+
+        .intel-stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 10px;
+
+            margin-top: 12px;
+        }
+
+
+        .stat {
+
+            padding:
+                13px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            background:
+                rgba(255,255,255,.018);
+        }
+
+
+        .stat-number {
+
+            display: block;
+
+            color:
+                var(--white);
+
+            font-size: 18px;
+
+            font-weight: 800;
+        }
+
+
+        .stat-label {
+
+            display: block;
+
+            margin-top: 3px;
+
+            color:
+                var(--dim);
+
+            font-size: 9px;
+
+            text-transform: uppercase;
+
+            letter-spacing: .7px;
+        }
+
+
+        .intel-footer {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-top: 14px;
+
+            padding-top: 14px;
+
+            border-top:
+                1px solid var(--border);
+        }
+
+
+        .system-status {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color:
+                var(--muted);
+
+            font-size: 10px;
+        }
+
+
+        .system-status span {
+
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background:
+                var(--cyan);
+        }
+
+
+        .classification {
+
+            color:
+                var(--amber);
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            letter-spacing: .8px;
+        }
+
+
+        /* =====================================================
+           TRUST STRIP
+        ===================================================== */
+
+        .trust {
+
+            max-width: 1250px;
+
+            margin:
+                0 auto;
+
+            padding:
+                0 clamp(20px, 6vw, 90px) 60px;
+        }
+
+
+        .trust-inner {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            padding:
+                17px 20px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 11px;
+
+            background:
+                rgba(255,255,255,.018);
+        }
+
+
+        .trust-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            color:
+                var(--muted);
+
+            font-size: 11px;
+        }
+
+
+        .trust-icon {
+
+            color:
+                var(--cyan);
+
+            font-weight: 900;
+        }
+
+
+        /* =====================================================
+           SECTIONS
+        ===================================================== */
+
+        .section {
+
+            max-width: 1250px;
+
+            margin:
+                0 auto;
+
+            padding:
+                80px clamp(20px, 6vw, 90px);
+        }
+
+
+        .section-heading {
+
+            max-width: 700px;
+
+            margin-bottom:
+                38px;
+        }
+
+
+        .section-kicker {
+
+            margin: 0 0 10px;
+
+            color:
+                var(--cyan);
+
+            font-size: 10px;
+
+            font-weight: 900;
+
+            letter-spacing: 1.5px;
+
+            text-transform: uppercase;
+        }
+
+
+        .section-heading h2 {
+
+            margin: 0;
+
+            font-size:
+                clamp(28px, 4vw, 42px);
+
+            letter-spacing:
+                -1.5px;
+        }
+
+
+        .section-heading p {
+
+            margin:
+                14px 0 0;
+
+            color:
+                var(--muted);
+
+            line-height:
+                1.7;
+
+            font-size: 15px;
+        }
+
+
+        /* =====================================================
+           CAPABILITY CARDS
+        ===================================================== */
+
+        .capabilities {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+        }
+
+
+        .capability {
+
+            position: relative;
+
+            min-height: 220px;
+
+            padding:
+                24px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                var(--radius);
+
+            background:
+                var(--panel);
+
+            overflow: hidden;
+
+            transition:
+                .25s ease;
+        }
+
+
+        .capability:hover {
+
+            transform:
+                translateY(-4px);
+
+            border-color:
+                var(--border-cyan);
+
+            background:
+                rgba(15,32,49,.9);
+        }
+
+
+        .capability-number {
+
+            position: absolute;
+
+            right: 18px;
+            top: 14px;
+
+            color:
+                rgba(148,163,184,.10);
+
+            font-size: 42px;
+
+            font-weight: 900;
+        }
+
+
+        .capability-icon {
+
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 20px;
+
+            border:
+                1px solid var(--border-cyan);
+
+            border-radius: 10px;
+
+            color:
+                var(--cyan);
+
+            background:
+                rgba(0,184,217,.06);
+
+            font-weight: 900;
+        }
+
+
+        .capability h3 {
+
+            margin:
+                0 0 9px;
+
+            font-size: 16px;
+        }
+
+
+        .capability p {
+
+            margin: 0;
+
+            color:
+                var(--muted);
+
+            font-size: 13px;
+
+            line-height:
+                1.7;
+        }
+
+
+        /* =====================================================
+           WORKFLOW
+        ===================================================== */
+
+        .workflow {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 0;
+        }
+
+
+        .workflow-step {
+
+            position: relative;
+
+            padding:
+                22px;
+
+            border:
+                1px solid var(--border);
+
+            border-right: 0;
+
+            background:
+                rgba(255,255,255,.015);
+        }
+
+
+        .workflow-step:first-child {
+
+            border-radius:
+                13px 0 0 13px;
+        }
+
+
+        .workflow-step:last-child {
+
+            border-right:
+                1px solid var(--border);
+
+            border-radius:
+                0 13px 13px 0;
+        }
+
+
+        .step-number {
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 30px;
+            height: 30px;
+
+            margin-bottom: 18px;
+
+            border:
+                1px solid var(--border-cyan);
+
+            border-radius: 8px;
+
+            color:
+                var(--cyan);
+
+            font-size: 11px;
+
+            font-weight: 900;
+        }
+
+
+        .workflow-step h3 {
+
+            margin:
+                0 0 8px;
+
+            font-size: 14px;
+        }
+
+
+        .workflow-step p {
+
+            margin: 0;
+
+            color:
+                var(--muted);
+
+            font-size: 12px;
+
+            line-height:
+                1.65;
+        }
+
+
+        /* =====================================================
+           TECHNOLOGY PANEL
+        ===================================================== */
+
+        .technology {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 16px;
+        }
+
+
+        .tech-panel {
+
+            padding:
+                26px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                var(--radius);
+
+            background:
+                var(--panel);
+        }
+
+
+        .tech-panel h3 {
+
+            margin:
+                0 0 20px;
+
+            font-size: 16px;
+        }
+
+
+        .tech-list {
+
+            display: grid;
+
+            gap: 10px;
+        }
+
+
+        .tech-item {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding:
+                12px 14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 9px;
+
+            background:
+                rgba(255,255,255,.015);
+        }
+
+
+        .tech-name {
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        .tech-role {
+
+            color:
+                var(--muted);
+
+            font-size: 11px;
+        }
+
+
+        .architecture {
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            gap: 8px;
+        }
+
+
+        .architecture-box {
+
+            padding:
+                14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 9px;
+
+            text-align: center;
+
+            background:
+                rgba(255,255,255,.015);
+        }
+
+
+        .architecture-box strong {
+
+            display: block;
+
+            font-size: 13px;
+        }
+
+
+        .architecture-box span {
+
+            display: block;
+
+            margin-top: 3px;
+
+            color:
+                var(--muted);
+
+            font-size: 10px;
+        }
+
+
+        .architecture-arrow {
+
+            text-align: center;
+
+            color:
+                var(--cyan);
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           FINAL CTA
+        ===================================================== */
+
+        .cta {
+
+            max-width: 1250px;
+
+            margin:
+                30px auto 90px;
+
+            padding:
+                0 clamp(20px, 6vw, 90px);
+        }
+
+
+        .cta-box {
+
+            position: relative;
+
+            padding:
+                55px 45px;
+
+            border:
+                1px solid var(--border-cyan);
+
+            border-radius:
+                18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(0,184,217,.08),
+                    rgba(15,27,45,.7)
+                );
+
+            overflow: hidden;
+        }
+
+
+        .cta-box::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 250px;
+            height: 250px;
+
+            right: -80px;
+            bottom: -150px;
+
+            border:
+                1px solid rgba(0,184,217,.15);
+
+            border-radius: 50%;
+
+            box-shadow:
+                0 0 0 40px rgba(0,184,217,.025),
+                0 0 0 80px rgba(0,184,217,.015);
+        }
+
+
+        .cta-box h2 {
+
+            position: relative;
+
+            margin:
+                0 0 10px;
+
+            font-size:
+                clamp(25px, 4vw, 38px);
+
+            letter-spacing:
+                -1px;
+        }
+
+
+        .cta-box p {
+
+            position: relative;
+
+            max-width: 650px;
+
+            margin:
+                0 0 25px;
+
+            color:
+                var(--muted);
+
+            line-height:
+                1.7;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+
+            border-top:
+                1px solid var(--border);
+
+            padding:
+                28px clamp(20px, 6vw, 90px);
+
+            background:
+                #050A13;
+        }
+
+
+        .footer-inner {
+
+            max-width: 1250px;
+
+            margin: auto;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+        }
+
+
+        .footer-brand {
+
+            color:
+                var(--muted);
+
+            font-size: 11px;
+        }
+
+
+        .footer-status {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color:
+                var(--dim);
+
+            font-size: 10px;
+        }
+
+
+        .footer-status span {
+
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background:
+                var(--cyan);
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media(max-width: 1000px) {
+
+            .hero-grid {
+
+                grid-template-columns:
+                    1fr;
+
+                gap: 50px;
+            }
+
+            .hero-content {
+
+                max-width: 850px;
+
+                margin: auto;
+
+                text-align: center;
+            }
+
+            .status-line {
+
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-description {
+
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-actions {
+
+                justify-content: center;
+            }
+
+            .intel-panel {
+
+                max-width: 600px;
+
+                width: 100%;
+
+                margin: auto;
+            }
+
+            .technology {
+
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media(max-width: 800px) {
+
+            .capabilities {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+            .workflow {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+            .workflow-step {
+
+                border-right:
+                    1px solid var(--border);
+
+                border-bottom:
+                    0;
+            }
+
+            .workflow-step:first-child {
+
+                border-radius:
+                    13px 13px 0 0;
+            }
+
+            .workflow-step:last-child {
+
+                border-radius:
+                    0 0 13px 13px;
+
+                border-bottom:
+                    1px solid var(--border);
+            }
+
+            .trust-inner {
+
+                flex-wrap: wrap;
+            }
+        }
+
+
+        @media(max-width: 600px) {
+
+            nav {
+
+                height: 64px;
+            }
+
+            .brand-subtitle {
+
+                display: none;
+            }
+
+            .nav-link {
+
+                padding:
+                    8px 10px;
+
+                font-size: 11px;
+            }
+
+            .admin-link {
+
+                display: none;
+            }
+
+            .hero {
+
+                padding-top:
+                    65px;
+            }
+
+            h1 {
+
+                letter-spacing:
+                    -2px;
+            }
+
+            .intel-stats {
+
+                grid-template-columns:
+                    1fr 1fr 1fr;
+            }
+
+            .stat {
+
+                padding:
+                    10px;
+            }
+
+            .stat-number {
+
+                font-size:
+                    15px;
+            }
+
+            .stat-label {
+
+                font-size:
+                    8px;
+            }
+
+            .cta-box {
+
+                padding:
+                    35px 25px;
+            }
+
+            .footer-inner {
+
+                flex-direction:
+                    column;
+
+                align-items:
+                    flex-start;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="ambient"></div>
+
+
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
+
+<nav>
+
+    <a
+        href="/"
+        class="brand"
+    >
+
+        <div class="logo">
+            CI
+        </div>
+
+        <div class="brand-text">
+
+            <div class="brand-title">
+                Criminet
+            </div>
+
+            <div class="brand-subtitle">
+                Investigation & Analysis Platform
+            </div>
+
+        </div>
+
+    </a>
+
+
+    <div class="nav-links">
+
+        <a
+            href="/admin"
+            class="nav-link admin-link"
+        >
+            Administrator
+        </a>
+
+        <a
+            href="/login"
+            class="nav-link login-button"
+        >
+            User Login
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+
+    <div class="hero-grid">
+
+
+        <div class="hero-content">
+
+            <div class="status-line">
+
+                <span class="status-dot"></span>
+
+                SECURE INTELLIGENCE ENVIRONMENT
+
+            </div>
+
+
+            <h1>
+
+                Connect the
+                <span class="accent">
+                    evidence.
+                </span>
+
+                <span class="soft">
+                    Understand the investigation.
+                </span>
+
+            </h1>
+
+
+            <p class="hero-description">
+
+                A centralized criminal intelligence platform
+                that organizes investigative records, discovers
+                relationships between entities, and uses
+                AI-assisted analysis to explain verified
+                connections.
+
+            </p>
+
+
+            <div class="hero-actions">
+
+                <a
+                    href="/login"
+                    class="primary"
+                >
+                    Access Investigation System
+                    →
+                </a>
+
+                <a
+                    href="#capabilities"
+                    class="secondary"
+                >
+                    Explore Capabilities
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             INTELLIGENCE PREVIEW
+        ================================================= -->
+
+        <div class="intel-panel">
+
+            <div class="intel-header">
+
+                <div class="intel-title">
+                    Intelligence Overview
+                </div>
+
+                <div class="secure">
+                    SYSTEM READY
+                </div>
+
+            </div>
+
+
+            <div class="intel-body">
+
+
+                <div class="mini-map">
+
+                    <div class="map-ring"></div>
+
+                    <div class="map-line line-one"></div>
+
+                    <div class="map-line line-two"></div>
+
+
+                    <div class="map-node node-a"></div>
+
+                    <div class="map-node node-b"></div>
+
+                    <div class="map-node node-c"></div>
+
+                    <div class="map-node node-d"></div>
+
+
+                    <div class="map-label">
+                        ASSOCIATION NETWORK
+                    </div>
+
+                </div>
+
+
+                <div class="intel-stats">
+
+                    <div class="stat">
+
+                        <span class="stat-number">
+                            06
+                        </span>
+
+                        <span class="stat-label">
+                            Entity Types
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <span class="stat-number">
+                            LIVE
+                        </span>
+
+                        <span class="stat-label">
+                            Discovery
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <span class="stat-number">
+                            AI
+                        </span>
+
+                        <span class="stat-label">
+                            Analysis
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="intel-footer">
+
+                    <div class="system-status">
+
+                        <span></span>
+
+                        Investigation engine operational
+
+                    </div>
+
+
+                    <div class="classification">
+                        CONTROLLED ACCESS
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     TRUST STRIP
+===================================================== -->
+
+<div class="trust">
+
+    <div class="trust-inner">
+
+        <div class="trust-item">
+
+            <span class="trust-icon">
+                ✓
+            </span>
+
+            Structured Intelligence
+
+        </div>
+
+
+        <div class="trust-item">
+
+            <span class="trust-icon">
+                ✓
+            </span>
+
+            Automated Association Discovery
+
+        </div>
+
+
+        <div class="trust-item">
+
+            <span class="trust-icon">
+                ✓
+            </span>
+
+            Role-Based Access
+
+        </div>
+
+
+        <div class="trust-item">
+
+            <span class="trust-icon">
+                ✓
+            </span>
+
+            AI-Assisted Explanation
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CAPABILITIES
+===================================================== -->
+
+<section
+    class="section"
+    id="capabilities"
+>
+
+    <div class="section-heading">
+
+        <p class="section-kicker">
+            CORE CAPABILITIES
+        </p>
+
+        <h2>
+            Built around the investigation workflow.
+        </h2>
+
+        <p>
+            The platform brings intelligence records,
+            deterministic relationship discovery,
+            visualization, and controlled AI analysis
+            into one investigation environment.
+        </p>
+
+    </div>
+
+
+    <div class="capabilities">
+
+
+        <div class="capability">
+
+            <div class="capability-number">
+                01
+            </div>
+
+            <div class="capability-icon">
+                DB
+            </div>
+
+            <h3>
+                Intelligence Management
+            </h3>
+
+            <p>
+                Store and organize persons, cases, vehicles,
+                phones, addresses and locations as structured
+                investigative intelligence.
+            </p>
+
+        </div>
+
+
+        <div class="capability">
+
+            <div class="capability-number">
+                02
+            </div>
+
+            <div class="capability-icon">
+                ↔
+            </div>
+
+            <h3>
+                Association Discovery
+            </h3>
+
+            <p>
+                Node.js analyzes raw records and automatically
+                identifies matching attributes and meaningful
+                connections between entities.
+            </p>
+
+        </div>
+
+
+        <div class="capability">
+
+            <div class="capability-number">
+                03
+            </div>
+
+            <div class="capability-icon">
+                ◉
+            </div>
+
+            <h3>
+                Investigation Graph
+            </h3>
+
+            <p>
+                Explore discovered associations through an
+                interactive investigation tree designed to
+                reveal connections and investigative leads.
+            </p>
+
+        </div>
+
+
+        <div class="capability">
+
+            <div class="capability-number">
+                04
+            </div>
+
+            <div class="capability-icon">
+                AI
+            </div>
+
+            <h3>
+                AI-Assisted Analysis
+            </h3>
+
+            <p>
+                Ollama explains backend-verified associations,
+                summarizes supplied evidence, and highlights
+                investigative significance and limitations.
+            </p>
+
+        </div>
+
+
+        <div class="capability">
+
+            <div class="capability-number">
+                05
+            </div>
+
+            <div class="capability-icon">
+                ID
+            </div>
+
+            <h3>
+                Controlled Access
+            </h3>
+
+            <p>
+                Role-based authentication gives administrators
+                control over investigator accounts and access
+                to sensitive investigation functionality.
+            </p>
+
+        </div>
+
+
+        <div class="capability">
+
+            <div class="capability-number">
+                06
+            </div>
+
+            <div class="capability-icon">
+                ⚠
+            </div>
+
+            <h3>
+                Investigative Leads
+            </h3>
+
+            <p>
+                Connections are presented as evidence-based
+                investigative leads rather than automatically
+                treating associations as proof of guilt.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     WORKFLOW
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-heading">
+
+        <p class="section-kicker">
+            INVESTIGATION WORKFLOW
+        </p>
+
+        <h2>
+            From raw intelligence to actionable context.
+        </h2>
+
+    </div>
+
+
+    <div class="workflow">
+
+
+        <div class="workflow-step">
+
+            <div class="step-number">
+                01
+            </div>
+
+            <h3>
+                Collect
+            </h3>
+
+            <p>
+                Enter structured intelligence records
+                into the centralized investigation system.
+            </p>
+
+        </div>
+
+
+        <div class="workflow-step">
+
+            <div class="step-number">
+                02
+            </div>
+
+            <h3>
+                Discover
+            </h3>
+
+            <p>
+                The analysis engine compares raw records
+                and discovers deterministic associations.
+            </p>
+
+        </div>
+
+
+        <div class="workflow-step">
+
+            <div class="step-number">
+                03
+            </div>
+
+            <h3>
+                Investigate
+            </h3>
+
+            <p>
+                Visualize the resulting network and
+                inspect relationships between entities.
+            </p>
+
+        </div>
+
+
+        <div class="workflow-step">
+
+            <div class="step-number">
+                04
+            </div>
+
+            <h3>
+                Explain
+            </h3>
+
+            <p>
+                Ollama provides an AI-generated explanation
+                based only on the supplied verified evidence.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     TECHNOLOGY
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-heading">
+
+        <p class="section-kicker">
+            SYSTEM ARCHITECTURE
+        </p>
+
+        <h2>
+            Designed for structured intelligence analysis.
+        </h2>
+
+    </div>
+
+
+    <div class="technology">
+
+
+        <div class="tech-panel">
+
+            <h3>
+                Core Technologies
+            </h3>
+
+
+            <div class="tech-list">
+
+
+                <div class="tech-item">
+
+                    <div>
+                        <div class="tech-name">
+                            Neo4j
+                        </div>
+
+                        <div class="tech-role">
+                            Intelligence data layer
+                        </div>
+                    </div>
+
+                    <span class="secure">
+                        GRAPH DB
+                    </span>
+
+                </div>
+
+
+                <div class="tech-item">
+
+                    <div>
+                        <div class="tech-name">
+                            Node.js + Express
+                        </div>
+
+                        <div class="tech-role">
+                            Application & analysis engine
+                        </div>
+                    </div>
+
+                    <span class="secure">
+                        BACKEND
+                    </span>
+
+                </div>
+
+
+                <div class="tech-item">
+
+                    <div>
+                        <div class="tech-name">
+                            D3.js
+                        </div>
+
+                        <div class="tech-role">
+                            Investigation visualization
+                        </div>
+                    </div>
+
+                    <span class="secure">
+                        VISUAL
+                    </span>
+
+                </div>
+
+
+                <div class="tech-item">
+
+                    <div>
+                        <div class="tech-name">
+                            Ollama
+                        </div>
+
+                        <div class="tech-role">
+                            Local AI explanation
+                        </div>
+                    </div>
+
+                    <span class="secure">
+                        AI
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="tech-panel architecture">
+
+            <h3>
+                Investigation Pipeline
+            </h3>
+
+
+            <div class="architecture-box">
+
+                <strong>
+                    Raw Intelligence
+                </strong>
+
+                <span>
+                    Structured entity records
+                </span>
+
+            </div>
+
+
+            <div class="architecture-arrow">
+                ↓
+            </div>
+
+
+            <div class="architecture-box">
+
+                <strong>
+                    Deterministic Analysis
+                </strong>
+
+                <span>
+                    Runtime association discovery
+                </span>
+
+            </div>
+
+
+            <div class="architecture-arrow">
+                ↓
+            </div>
+
+
+            <div class="architecture-box">
+
+                <strong>
+                    Investigation Graph
+                </strong>
+
+                <span>
+                    Visualized investigative leads
+                </span>
+
+            </div>
+
+
+            <div class="architecture-arrow">
+                ↓
+            </div>
+
+
+            <div class="architecture-box">
+
+                <strong>
+                    AI Explanation
+                </strong>
+
+                <span>
+                    Evidence-grounded analysis
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CTA
+===================================================== -->
+
+<section class="cta">
+
+    <div class="cta-box">
+
+        <h2>
+            Ready to begin an investigation?
+        </h2>
+
+        <p>
+            Access the intelligence environment to manage
+            records, explore discovered associations and
+            analyze verified investigative connections.
+        </p>
+
+
+        <a
+            href="/login"
+            class="primary"
+        >
+            Enter Investigation System →
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <div class="footer-inner">
+
+        <div class="footer-brand">
+
+            Criminet
+            · Authorized Access Only
+
+        </div>
+
+
+        <div class="footer-status">
+
+            <span></span>
+
+            Investigation platform operational
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+</body>
+
+</html>
