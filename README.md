@@ -47,16 +47,3 @@ Open `http://localhost:3000`.
 - `GET /api/entities/:type`
 - `POST /api/entities/:type`
 
-## Important
-
-The previous manual relationship insertion API has been removed. The application should not use `CREATE (a)-[:REL]->(b)` for intelligence relationships.
-
-If an old database contains Phase 3 demo relationships, remove them in Neo4j Browser with:
-
-```cypher
-MATCH ()-[r]->() DELETE r;
-```
-
-## Phase 4 clean demo setup
-
-The Phase 4 architecture does not store investigation relationships in Neo4j. To make the existing DEMO-* dataset internally correlated, run `neo4j/PHASE4_DEMO_RAW_DATA.cypher` directly in Neo4j Browser. It removes old stored relationships and adds only raw reference/matching properties. Then restart Node.js and select `DEMO-P-1` on the Investigation Tree page.
