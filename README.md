@@ -1,631 +1,284 @@
-# 🔍 CrimiNet
+# CrimiNetAI
+## Predictive Analytics for Cybercrime Complaints & Cash-Withdrawal Hotspots
 
-## AI-Powered Criminal Network Analysis System
-
-> **Smart India Hackathon 2025/2026**  
-> **Problem Statement ID:** 26189  
-> **Problem Statement:** AI Powered Criminal Network Analysis System  
-> **Team:** Think Forge  
-> **Theme:** Blockchain & Cybersecurity  
-> **Category:** Software
+**Smart India Hackathon 2026 · Problem Statement SIH26184**  
+**Official problem statement:** Development of a Predictive Analytics Framework for Cybercrime Complaints to Forecast Likely Cash Withdrawal Locations in Advance, Enabling Generation of Actionable Intelligence for Timely and Proactive Cybercrime Intervention.  
+**Organization:** Ministry of Home Affairs  
+**Theme:** Blockchain & Cybersecurity  
+**Category:** Software  
+**Team:** Think Forge  
+**Repository:** https://github.com/rudradesa/criminet
 
 ---
 
-## 🚨 Problem Statement
+## 1. Overview
 
-Criminal investigations involve large amounts of fragmented information such as **FIRs, case records, phone numbers, vehicle details, addresses, locations, and person records**.
+CrimiNetAI is a cybercrime-intelligence platform concept that aims to help authorized investigators identify patterns across cybercrime complaints and connected entities, and support the prediction of locations where fraud-related funds may be withdrawn as cash.
 
-The major challenge is not only storing this information, but **discovering hidden and indirect connections between different records**.
+The goal is to support earlier, evidence-based intervention. By connecting complaint information with relevant entities and geographic signals, the system can help analysts investigate patterns, inspect potential hotspots, and share actionable intelligence with authorized law-enforcement and financial-sector personnel.
 
-For example:
+**Important implementation note:** The existing repository provides a graph-based investigation foundation—entity management, Neo4j graph storage, relationship discovery, multi-hop analysis, an investigation tree, and interactive visualization. A validated predictive model for cash-withdrawal locations, a production GIS risk heatmap, and live alert integrations must not be considered implemented unless they are separately built and tested. This README distinguishes the current foundation from the proposed SIH-focused extensions.
+
+## 2. Problem Statement
+
+The National Cybercrime Reporting Portal receives a high volume of complaints. Information relevant to a single cyber-fraud investigation may be distributed across complaint records, phone numbers, bank or payment references, people, cases, locations, and other evidence. Manual cross-referencing can delay the identification of connected incidents and potential cash-out activity.
+
+The SIH26184 challenge is specifically to develop a predictive analytics framework that forecasts likely cash-withdrawal locations in advance, so authorized agencies can consider timely interventions. It is not enough to display a network of related people: the solution needs a location-focused prediction and operational response workflow.
+
+### The key questions
+
+- Which complaints appear to share a fraud pattern or relevant entities?
+- Which locations may warrant closer attention based on historical and current evidence?
+- What evidence supports a hotspot prediction, and how reliable is it?
+- How can authorized investigators and participating financial institutions receive useful alerts in time?
+- How can the system protect sensitive complaint and financial data while avoiding unsupported accusations?
+
+## 3. Proposed Solution
+
+CrimiNetAI is proposed as a decision-support system with five connected capabilities:
+
+1. **Complaint data ingestion:** Import authorized, appropriately protected complaint and historical records.
+2. **Entity and pattern analysis:** Normalize relevant fields and identify potential connections across complaints.
+3. **Predictive analytics:** Use suitable historical data and validated features to estimate risk for geographic areas and time windows.
+4. **Risk heatmap and investigation interface:** Show risk estimates, trends, filters, supporting evidence, and the limits of each prediction.
+5. **Actionable alerts:** Provide controlled notifications to authorized users when a validated threshold or rule is met.
+
+The system should prioritize *potential cash-withdrawal locations and risk areas*, not label an individual as guilty. Every prediction is an investigative lead requiring human verification.
+
+## 4. Proposed End-to-End Workflow
 
 ```text
-Person A
-   ↓
-Phone Number
-   ↓
-Person B
-   ↓
-Case
-   ↓
-Vehicle
-   ↓
-Person C
+Authorized Cybercrime Complaint Data
+                 |
+                 v
+        Data Validation & Cleaning
+                 |
+                 v
+     Entity Resolution and Pattern Analysis
+                 |
+                 v
+       Historical / Geospatial Features
+                 |
+                 v
+      Predictive Risk-Scoring Model
+                 |
+                 v
+    Risk Score by Location and Time Window
+                 |
+        +--------+---------+
+        |                  |
+        v                  v
+ GIS Risk Heatmap    Evidence & Case Graph
+        |                  |
+        +--------+---------+
+                 |
+                 v
+       Authorized Analyst Review
+                 |
+                 v
+     Audited Alerts / Actionable Reports
+```
 
-When such information is analyzed manually, investigators may spend significant time searching across records and can find it difficult to understand complex multi-hop connections.
+This is the **proposed SIH workflow**, not a claim that every component currently exists in the repository.
 
-The proposed solution combines data ingestion, entity extraction, graph construction, advanced analysis, and visualization to help investigators understand complex criminal networks.
+## 5. Current Prototype Foundation
 
-💡 Our Solution
+The existing application focuses on graph-based investigation and connected-record exploration.
 
-CrimiNet is a graph-based criminal intelligence and investigation platform designed to transform fragmented investigation data into a connected and explorable intelligence graph.
+### Existing foundation described by the repository
 
-Instead of treating every record as an isolated piece of information, CrimiNet represents investigation entities as nodes in a Neo4j graph database and discovers associations between them.
+- **Entity management:** Manage person, case, phone, vehicle, address, and location records.
+- **Neo4j graph storage:** Represent entities and their associations as a graph.
+- **Relationship discovery:** Find associations using available identifiers and attributes.
+- **Multi-hop analysis:** Explore indirect links through connected entities.
+- **Investigation tree:** Start from a selected entity and explore related records by depth.
+- **Interactive graph visualization:** Explore the resulting network through D3.js.
+- **Ollama integration foundation:** A service is present for local LLM integration; actual AI behavior should be verified against the running application and current code.
 
-The system works with entities such as:
+These capabilities can support complaint correlation and evidence exploration. They do **not**, by themselves, predict cash-withdrawal locations. That requires geospatial and temporal features, suitable labelled historical data, a forecasting/risk-scoring model, and evaluation.
 
-👤 Persons
-📁 Cases
-📱 Phones
-🚗 Vehicles
-🏠 Addresses
-📍 Locations
-Core Idea
+## 6. Proposed SIH-Specific Modules
 
-Start from one entity and discover the connected investigation network around it.
+### A. Complaint ingestion and normalization
 
-🔄 How CrimiNet Works
-              Investigation Data
-                       ↓
-                Entity Management
-                       ↓
-                  Neo4j Graph
-                       ↓
-            Relationship Discovery
-                       ↓
-               Multi-Hop Analysis
-                       ↓
-              Investigation Tree
-                       ↓
-             Graph Visualization
+- Import only data that the team is authorized to use.
+- Validate timestamps, geographic fields, complaint categories, and relevant identifiers.
+- Standardize formats and handle missing or inconsistent values.
+- Preserve source references so an analyst can trace a finding back to its evidence.
 
-The broader proposed AI pipeline is:
+### B. Cross-complaint entity resolution
 
-Data Ingestion
-      ↓
-Entity Extraction
-      ↓
-Graph Construction
-      ↓
-Advanced Analysis
-      ↓
-Visualization
-🧩 Entity Model
+- Identify candidate links across records using appropriate identifiers and documented matching rules.
+- Represent relevant entities and relationships in Neo4j where graph analysis adds value.
+- Record the source and reason for each association.
+- Treat uncertain matches as candidates for review, not as confirmed facts.
 
-CrimiNet represents different investigation entities and their associations in a graph.
+### C. Predictive analytics engine
 
-┌──────────┐
-│  PERSON  │
-└────┬─────┘
-     │
-     ├────────── PHONE
-     │
-     ├────────── VEHICLE
-     │
-     ├────────── ADDRESS
-     │
-     └────────── CASE
-                    │
-                    └──── LOCATION
-Supported Entity Types
-PERSON
-CASE
-PHONE
-VEHICLE
-ADDRESS
-LOCATION
-🔗 Automatic Relationship Discovery
+The model should estimate the likelihood or relative risk of a cash-withdrawal event in a geographic area during a defined future time window.
 
-One of the core features of CrimiNet is runtime relationship discovery.
+Potential feature groups, **subject to data availability and legal authorization**, include:
 
-The system does not require investigators to manually create every relationship between entities.
+- Historical cyber-fraud complaint counts by area and time.
+- Historical, verified cash-out incident locations and timestamps.
+- Changes in complaint volume and recurring fraud patterns.
+- Time-based and geographic patterns.
+- Evidence-backed relationships between relevant complaints and entities.
 
-Instead, the analysis engine can identify associations using common identifiers and attributes.
+The final features and model must be selected after inspecting the available dataset. Do not claim model accuracy or predictive capability until it has been measured on held-out data.
 
-Current Association Rules
-Person phone number ↔ Phone number
+### D. Geographic risk heatmap
 
-Person vehicle registration ↔ Vehicle registration
+The planned GIS dashboard should support:
 
-Person address + city (+ state) ↔ Address
+- Map-based display of risk by area and forecast window.
+- Filters for time, location, and relevant complaint category.
+- Clear risk levels and timestamps showing when the estimate was generated.
+- Drill-down to authorized supporting evidence.
+- A distinction between historical incidents, current reports, and predicted risk.
 
-Case person ID ↔ Person
+### E. Alert and investigation workflow
 
-Case phone ID ↔ Phone
+- Generate an alert only when defined and evaluated criteria are met.
+- Include the predicted area and time window, risk score, evidence summary, model/version, and limitations.
+- Route alerts only to authorized roles.
+- Log who viewed, acknowledged, escalated, or closed an alert.
+- Keep human review in the decision loop before operational intervention.
 
-Case vehicle ID ↔ Vehicle
+## 7. Suggested System Architecture
 
-Case location ID ↔ Location
-Example
-┌──────────┐
-│ Person A │
-└────┬─────┘
-     │
-     │ Same Phone Number
-     ↓
-┌──────────────┐
-│ Phone Number │
-└──────┬───────┘
-       │
-       ↓
-┌──────────┐
-│ Person B │
-└──────────┘
+### Existing technology foundation
 
-This allows the system to identify possible investigative associations from the available data.
+| Technology | Current / intended role |
+|---|---|
+| Node.js | Existing backend runtime |
+| Express.js | Existing web server and route layer |
+| EJS | Existing server-rendered interface |
+| Neo4j | Existing graph database for investigation entities and links |
+| D3.js | Existing interactive graph visualization |
+| Ollama | Local LLM integration foundation; verify implemented use cases |
 
-🌳 Multi-Hop Investigation
+### Proposed extensions for SIH26184
 
-CrimiNet enables investigators to explore connections beyond direct relationships.
+| Component | Possible technology | Purpose |
+|---|---|---|
+| Predictive analytics | Python and suitable ML/geospatial libraries | Train and evaluate a location/time risk model |
+| Prediction API | FastAPI or an API integrated into the existing backend | Serve versioned risk predictions |
+| Geographic dashboard | Leaflet or another suitable GIS library | Display forecast areas and map filters |
+| Data processing | Python/SQL and validated pipelines | Clean, aggregate, and prepare authorized historical data |
+| Notifications | Email/SMS/API integration, subject to access | Deliver controlled alerts to authorized recipients |
+| Audit and access control | Role-based authorization and audit logs | Restrict and record access to sensitive data |
 
-For example:
+The proposed stack is not a claim that all these extensions are currently implemented. Avoid describing a planned Python/FastAPI/React architecture as the existing stack unless the codebase has actually been migrated and verified.
 
-Person A
-   ↓
-Phone
-   ↓
-Person B
-   ↓
-Case
-   ↓
-Vehicle
-   ↓
-Person C
-   ↓
-Location
+## 8. Data Requirements and Evaluation
 
-An investigator can start with one entity and progressively explore connected entities across multiple hops.
+The most important feasibility dependency is access to sufficiently detailed, legally usable historical data that links cybercrime complaints to verified cash-withdrawal events and their locations and times.
 
-This is useful when an important connection is not directly stored between two people but exists through another entity.
+A demo can use synthetic or public data clearly labelled as such. Synthetic data can demonstrate workflow and UI behavior, but it cannot establish real-world predictive performance.
 
-🔎 Investigation Tree
+Before claiming that the model works, evaluate it using a time-aware holdout set or backtesting that prevents future information from leaking into training. Appropriate measures may include:
 
-After selecting a root entity, CrimiNet performs graph traversal to discover connected entities.
+- Precision among the highest-risk locations flagged.
+- Recall of verified cash-out incidents within the selected top-risk areas.
+- False-alert rate and alert volume.
+- Lead time between an alert and a verified event, where timestamps allow it.
+- Calibration of predicted risk, where suitable labels and enough data exist.
+- Performance across locations, periods, and relevant complaint categories.
 
-Example:
+Compare the model with a simple baseline, document data limitations, and report results honestly. Do not invent dataset sizes, accuracy, saved money, prevented fraud, or response-time improvements.
 
-                    Person A
-                       │
-              ┌────────┴────────┐
-              ↓                 ↓
-            Phone             Vehicle
-              │                 │
-              ↓                 ↓
-           Person B            Case
-              │                 │
-              ↓                 ↓
-           Case 02            Person C
-              │
-              ↓
-           Location
+## 9. Feasibility, Challenges, and Mitigations
 
-The investigation engine constructs an investigation tree from the selected root entity, allowing the investigator to explore the network layer by layer.
+| Challenge | Mitigation |
+|---|---|
+| Restricted access to complaint and financial data | Develop a synthetic-data demo first; seek formal, authorized access for real evaluation |
+| Incomplete or inconsistent records | Data validation, missing-value handling, provenance, and explicit uncertainty |
+| Sparse verified cash-out labels | Start with a transparent baseline and report limitations; do not overstate forecast reliability |
+| Geographic and temporal bias | Time-based evaluation and checks across locations and periods |
+| False positives | Human review, explainable evidence, calibrated thresholds, and monitoring |
+| Sensitive personal and financial information | Data minimization, encryption, role-based access, audit trails, and retention controls |
+| Operational alert overload | Prioritization, configurable thresholds, deduplication, and alert-quality evaluation |
+| Integration with agencies and financial institutions | Documented APIs, authorized integrations, and controlled testing |
 
-📊 Interactive Graph Visualization
+## 10. Privacy, Security, and Responsible Use
 
-Complex investigation networks can be difficult to understand using traditional tables.
+CrimiNetAI is intended as an investigative decision-support tool.
 
-CrimiNet provides an interactive graph visualization using D3.js.
+- A shared identifier or graph connection does not prove wrongdoing.
+- A predicted hotspot is a risk estimate, not proof that a crime will occur.
+- Keep personally identifiable and financial data to the minimum necessary.
+- Use role-based access, secure credential handling, encryption in transit and at rest, and auditable access logs.
+- Use synthetic or appropriately de-identified data for public demonstrations.
+- Record evidence provenance, model versions, prediction timestamps, and uncertainty.
+- Require authorized human review before consequential action.
+- Follow applicable legal requirements, data-sharing agreements, and institutional policies.
+- Do not expose sensitive complaint details in public dashboards, screenshots, logs, or repository examples.
 
-The visualization represents entities and their discovered associations as a connected network.
+## 11. Blockchain and Cybersecurity Theme
 
-                 PERSON A
-                    │
-          ┌─────────┼─────────┐
-          ↓         ↓         ↓
-        PHONE      CASE     VEHICLE
-          │         │         │
-          ↓         ↓         ↓
-       PERSON B  LOCATION   PERSON C
+The problem statement is categorized under Blockchain & Cybersecurity, but blockchain should not be claimed as implemented merely because it is named in the proposal.
 
-The graph allows investigators to visually understand:
+A defensible optional extension would be tamper-evident audit records for selected events—such as a prediction being generated, an alert being acknowledged, or evidence metadata being changed—without placing raw personal or financial data on a public blockchain. A signed append-only audit log may also be a simpler alternative. Any ledger approach should be justified against privacy, performance, access-control, and deployment requirements.
 
-Connected people
-Cases
-Phone numbers
-Vehicles
-Addresses
-Locations
-Multi-hop connections
-Investigation paths
-🤖 AI-Powered Vision
+## 12. Expected Impact
 
-The broader CrimiNet solution proposed for the SIH problem includes an AI layer using Ollama + a local LLM.
+If validated with appropriate data and deployed with authorized partners, the system could help:
 
-The proposed pipeline is:
+- Identify areas that merit earlier investigative attention.
+- Correlate related complaints more efficiently.
+- Present location-based risk and supporting evidence in one interface.
+- Improve coordination among authorized law-enforcement and financial-sector teams.
+- Prioritize human review and potentially shorten response workflows.
 
-                  Crime Records
-                       ↓
-                Data Ingestion
-                       ↓
-                Entity Extraction
-                       ↓
-              Graph Construction
-                       ↓
-              Advanced Analysis
-                       ↓
-                Visualization
+These are intended benefits, not measured results. Actual impact must be established through evaluation and a controlled pilot.
 
-The AI layer can be used to extract entities and relationships from unstructured crime-related records and provide structured information to the graph-based investigation system.
+## 13. Repository and Setup
 
-The current repository focuses primarily on the graph-based investigation foundation, including:
+Repository: https://github.com/rudradesa/criminet
 
-Entity management
-Neo4j graph storage
-Runtime relationship discovery
-Multi-hop analysis
-Investigation-tree generation
-Graph visualization
+The current application uses Node.js, npm, and Neo4j. Confirm the repository's `package.json`, environment example, and current README before running commands.
 
-The AI extraction and advanced analytical capabilities can be integrated as additional layers over this foundation.
+Typical setup flow:
 
-🏗️ System Architecture
-                         ┌─────────────────┐
-                         │  INVESTIGATOR   │
-                         └────────┬────────┘
-                                  │
-                                  ↓
-                    ┌────────────────────────┐
-                    │     Web Interface      │
-                    │       EJS + D3.js      │
-                    └───────────┬────────────┘
-                                │
-                                ↓
-                    ┌────────────────────────┐
-                    │    Node.js + Express   │
-                    │                        │
-                    │  Entity Management     │
-                    │  Analysis              │
-                    │  Graph API             │
-                    │  Relationship Discovery│
-                    └───────────┬────────────┘
-                                │
-                                ↓
-                    ┌────────────────────────┐
-                    │         Neo4j           │
-                    │     Graph Database      │
-                    └───────────┬────────────┘
-                                │
-                                ↓
-                    ┌────────────────────────┐
-                    │  Investigation Engine   │
-                    │                        │
-                    │  Multi-Hop Traversal   │
-                    │  Association Discovery │
-                    │  Investigation Tree    │
-                    └───────────┬────────────┘
-                                │
-                                ↓
-                    ┌────────────────────────┐
-                    │   D3.js Visualization  │
-                    └────────────────────────┘
-🛠️ Technology Stack
-Technology	Purpose
-Node.js	Backend runtime
-Express.js	Server and API layer
-EJS	Web interface
-Neo4j	Graph database
-D3.js	Interactive graph visualization
-Ollama	Local AI/LLM integration
-📁 Project Structure
-criminet/
-│
-├── neo4j/
-│   ├── PHASE4_DEMO_RAW_DATA.cypher
-│   ├── RAW_DATA_SETUP.cypher
-│   ├── schema.cypher
-│   └── seed.cypher
-│
-├── public/
-│   └── css/
-│
-├── src/
-│   ├── config/
-│   │   └── neo4j.js
-│   │
-│   ├── routes/
-│   │   ├── ai.js
-│   │   ├── analysis.js
-│   │   ├── entities.js
-│   │   ├── graph.js
-│   │   └── relationships.js
-│   │
-│   ├── services/
-│   │   ├── entityService.js
-│   │   └── ollamaService.js
-│   │
-│   └── server.js
-│
-├── views/
-│   ├── dashboard.ejs
-│   ├── data-entry.ejs
-│   ├── entity-detail.ejs
-│   ├── graph.ejs
-│   └── relationships.ejs
-│
-├── .env.example
-├── .gitignore
-├── package.json
-├── package-lock.json
-└── README.md
-🚀 Getting Started
-Prerequisites
-
-Make sure the following are installed:
-
-Node.js
-npm
-Neo4j
-1. Clone the Repository
+```bash
 git clone https://github.com/rudradesa/criminet.git
 cd criminet
-2. Install Dependencies
 npm install
-3. Configure Environment Variables
+```
 
-Create a .env file using .env.example.
+Create a local `.env` file based on the repository's `.env.example`, set the appropriate Neo4j connection details, and run the start script defined in `package.json` (commonly `npm start` for production-style startup or `npm run dev` for development if that script exists).
 
-Example:
+Do not commit `.env`, database passwords, API keys, real complaint data, or other secrets. Use the project's actual configuration and scripts rather than assuming that every deployment uses the same settings.
 
-NEO4J_URI=bolt://localhost:7687
-NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=your_password
-NEO4J_DATABASE=criminalintelligence
-PORT=3000
+## 14. Roadmap
 
-⚠️ Never commit your real .env file, passwords, API keys, or other sensitive credentials to GitHub.
+1. **Foundation:** Verify the existing entity, graph, investigation-tree, and visualization flows.
+2. **Data pipeline:** Define a safe complaint schema and create a reproducible synthetic demo dataset.
+3. **Geospatial preparation:** Aggregate historical events by location and time, where fields are available.
+4. **Baseline forecasting:** Build a transparent baseline and compare it with candidate models.
+5. **Risk map:** Visualize predictions with time windows, provenance, and uncertainty.
+6. **Alerts:** Add controlled alerts, role checks, acknowledgement, and audit logs.
+7. **Validation:** Backtest with authorized, verified data and document limitations.
+8. **Pilot readiness:** Review security, privacy, integration, and operational requirements with relevant stakeholders.
 
-4. Configure Neo4j
+## 15. References
 
-The repository contains Cypher scripts inside:
+- Smart India Hackathon 2026, **SIH26184**: *Development of a Predictive Analytics Framework for Cybercrime Complaints to Forecast Likely Cash Withdrawal Locations in Advance, Enabling Generation of Actionable Intelligence for Timely and Proactive Cybercrime Intervention.*  
+  Problem-statement listing: https://sih2026.ankus.dev/en/orgs/ministry-of-home-affairs  
+  Detailed problem statement and deliverables: https://sihone.pages.dev/ps/26184
+- National Cyber Crime Reporting Portal: https://cybercrime.gov.in/
+- National Crime Records Bureau: https://ncrb.gov.in/
+- NITI Aayog: https://www.niti.gov.in/
 
-neo4j/
+Check current official sources and obtain permission before using any restricted data. The SIH problem-statement listing above is a publicly accessible secondary listing; use the official SIH portal or organizer-provided statement as the final authority for submission requirements.
 
-including:
+---
 
-schema.cypher
-seed.cypher
-RAW_DATA_SETUP.cypher
-PHASE4_DEMO_RAW_DATA.cypher
+## Team Think Forge
 
-Use the appropriate scripts to prepare the Neo4j database for the project or demonstration.
+**CrimiNetAI — SIH 2026 · SIH26184**
 
-5. Start the Application
-Normal Mode
-npm start
-Development Mode
-npm run dev
+*Turning cybercrime complaint patterns into evidence-backed, location-focused intelligence for timely intervention.*
 
-Then open:
-
-http://localhost:3000
-🖥️ Main Features
-📊 Dashboard
-
-Provides the main interface for accessing the investigation system and its major modules.
-
-👤 Entity Management
-
-Allows investigators to enter and manage:
-
-Persons
-Cases
-Phones
-Vehicles
-Addresses
-Locations
-🔗 Relationship Discovery
-
-Analyzes stored entity information and identifies possible investigative associations.
-
-🌳 Investigation Tree
-
-Starts from a selected root entity and explores connected entities across multiple hops.
-
-📈 Graph Visualization
-
-Displays the discovered investigation network through an interactive graph.
-
-🧠 AI Integration
-
-Provides an architecture for integrating Ollama and local LLM-based processing into the investigation workflow.
-
-🔬 Example Investigation
-
-Suppose the database contains:
-
-PERSON A
-Phone: 9999999999
-Vehicle: GJ01AB1234
-
-and another record contains:
-
-PERSON B
-Phone: 9999999999
-
-CrimiNet can identify the shared phone association:
-
-┌──────────┐
-│ Person A │
-└────┬─────┘
-     │
-     ↓
-┌──────────────┐
-│ 9999999999   │
-│    PHONE     │
-└──────┬───────┘
-       │
-       ↓
-┌──────────┐
-│ Person B │
-└──────────┘
-
-If the same phone or another connected entity is associated with a case:
-
-Person A
-   ↓
-Phone
-   ↓
-Person B
-   ↓
-Case
-   ↓
-Vehicle
-   ↓
-Person C
-
-the investigator can continue exploring the connected network.
-
-🎯 How CrimiNet Addresses the SIH Problem
-Challenge	CrimiNet Approach
-Fragmented investigation data	Structured entity management
-Difficult relationship discovery	Runtime association discovery
-Indirect connections	Multi-hop graph traversal
-Complex criminal networks	Neo4j graph representation
-Manual cross-referencing	Automated association discovery
-Difficult network understanding	Investigation tree
-Complex relationship visualization	Interactive D3.js graph
-Unstructured data processing	Ollama + LLM integration
-Advanced network analysis	Extensible graph-analysis architecture
-🔄 From Raw Data to Investigation Intelligence
-
-CrimiNet converts investigation information through multiple stages:
-
-┌──────────────────────┐
-│   Raw Investigation  │
-│        Data          │
-└──────────┬───────────┘
-           ↓
-┌──────────────────────┐
-│   Entity Management  │
-└──────────┬───────────┘
-           ↓
-┌──────────────────────┐
-│    Neo4j Graph DB    │
-└──────────┬───────────┘
-           ↓
-┌──────────────────────┐
-│ Relationship         │
-│ Discovery            │
-└──────────┬───────────┘
-           ↓
-┌──────────────────────┐
-│ Multi-Hop Traversal  │
-└──────────┬───────────┘
-           ↓
-┌──────────────────────┐
-│ Investigation Tree   │
-└──────────┬───────────┘
-           ↓
-┌──────────────────────┐
-│ Interactive Graph    │
-│ Visualization        │
-└──────────────────────┘
-🎯 Connection to the SIH Proposal
-
-The SIH proposal describes the overall solution as:
-
-Data Ingestion
-      ↓
-Entity Extraction
-      ↓
-Graph Construction
-      ↓
-Advanced Analysis
-      ↓
-Visualization
-
-CrimiNet provides the graph-based investigation foundation for this pipeline.
-
-The current implementation focuses on:
-
-Entity Data
-     ↓
-Neo4j
-     ↓
-Relationship Discovery
-     ↓
-Multi-Hop Analysis
-     ↓
-Investigation Tree
-     ↓
-Visualization
-
-The proposed AI layer can extend this system by automatically extracting entities and relationships from unstructured investigation documents.
-
-🔮 Future Scope
-
-The CrimiNet architecture can be extended with:
-
-🤖 AI-based entity extraction
-🔗 Automated relationship extraction
-🧠 Advanced link prediction
-📂 Cross-case network analysis
-🗺️ Geographic proximity analysis
-⏱️ Timeline analysis
-📑 AI-assisted investigation summaries
-📊 Advanced network analytics
-🔌 Additional authorized data-source integration
-🔐 Privacy & Responsible Use
-
-CrimiNet is designed as an investigative intelligence and decision-support system.
-
-A discovered graph connection represents an investigative association requiring further verification, not proof of criminal involvement.
-
-For example:
-
-Person A
-   ↓
-Phone
-   ↓
-Person B
-
-does not, by itself, establish criminal involvement.
-
-Any real-world deployment should include appropriate:
-
-Authorization
-Access control
-Data protection
-Privacy safeguards
-Audit mechanisms
-Human verification
-Legal and regulatory compliance
-
-AI-generated results should also be treated as analytical assistance and verified against reliable source evidence.
-
-📈 Expected Impact
-👮 Investigative Impact
-Faster exploration of connected information
-Easier discovery of indirect associations
-Multi-hop investigation support
-Better understanding of complex networks
-💻 Technological Impact
-Graph-based investigative architecture
-AI-ready data pipeline
-Interactive network visualization
-Extensible analysis engine
-📊 Operational Impact
-Reduced dependency on manual cross-referencing
-Structured investigation workflow
-Centralized entity-based analysis
-Improved visibility of connected information
-📚 References
-
-The project proposal references research and resources related to crime-data analytics, AI in policing, crime statistics and AI strategy.
-
-IEEE Xplore — Crime Data Analysis Using Machine Learning Techniques
-Google Scholar — Artificial Intelligence Applications in Indian Policing: Opportunities and Challenges
-National Crime Records Bureau (NCRB) — Crime in India 2024
-NITI Aayog — National Strategy for Artificial Intelligence
-Indian Police Foundation — Smart Policing case studies
-👥 Team Think Forge
-CrimiNet
-
-AI-Powered Criminal Network Analysis System
-
-Developed for Smart India Hackathon
-
-🔗 Repository
-
-GitHub:
-https://github.com/rudradesa/criminet
-
-<div align="center">
-⭐ CrimiNet
-
-Turning fragmented investigation data into a connected intelligence graph.
-
-Start from one entity. Explore the network. Discover the connections.
-
-</div> ``
+**Implementation status matters:** Keep the README updated as modules are completed. Clearly label each feature as implemented, in progress, or proposed, and publish performance numbers only after reproducible evaluation.
